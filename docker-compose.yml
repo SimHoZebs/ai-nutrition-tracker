@@ -36,5 +36,18 @@ services:
       - ./backend:/app
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 
+  adk:
+    container_name: adk
+    build: ./adk/
+    ports:
+      - "8080:8080"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/engaged-cargo-473407-f9-b459010050b9.json
+    volumes:
+      - ./adk:/app
+      - ./backend/engaged-cargo-473407-f9-b459010050b9.json:/app/engaged-cargo-473407-f9-b459010050b9.json
+    depends_on:
+      - api
+
 volumes:
   postgres_data:
