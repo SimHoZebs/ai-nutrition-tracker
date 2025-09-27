@@ -17,6 +17,7 @@ export default function Card({variant = 'plain', className = "", children}: Card
         [className]: true,
       })}
     >
+      {}
       {children}
     </div>
   );
