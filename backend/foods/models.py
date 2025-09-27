@@ -10,7 +10,6 @@ class Food(models.Model):
     calories = models.DecimalField(max_digits=10, decimal_places=2)
     protein = models.DecimalField(max_digits=10, decimal_places=2)
     carbohydrates = models.DecimalField(max_digits=10, decimal_places=2)
-    fat = models.DecimalField(max_digits=10, decimal_places=2)
     trans_fat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     saturated_fat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unsaturated_fat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
