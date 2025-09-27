@@ -1,29 +1,30 @@
 import styles from "./dashboard.module.css"
 import Button from "../../components/button/button.tsx"
-import Card from "../../components/card/card.tsx"
 import NutrientCard from "../../components/nutrient-card/nutrient-card.tsx"
 import {Icon} from "@iconify/react";
 import Divider from "../../components/divider/divider.tsx";
 import {useNavigate} from "react-router";
+import MealCard from "../../components/meal-card/meal-card.tsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.page}>
-      <Button variant="primary" text="Get started" />
-      <Button variant="secondary" text="Get started" />
+    <>
+      <h1>LazyFood.</h1>
 
-      <Card variant="plain">
-        Hello!
-      </Card>
-
+      <h2>Today's Goals</h2>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50% 50%', gap: '10px' }}>
         <NutrientCard />
         <NutrientCard />
-        <NutrientCard />
-        <NutrientCard />
       </div>
+
+      <Divider />
+
+      <h2>Today's Meals</h2>
+      <MealCard />
+      <MealCard />
+      <MealCard />
 
       <Divider />
 
@@ -56,7 +57,6 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
-
-    </div>
+    </>
   )
 }
