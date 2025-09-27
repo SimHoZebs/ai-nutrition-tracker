@@ -1,0 +1,9 @@
+.textbox {
+  all: unset;
+  border: solid 0.05rem var(--border);
+  border-radius: var(--border-radius-1);
+  padding: 10px;
+  height: 100px;
+  word-wrap: break-word;
+  resize: none;
+}

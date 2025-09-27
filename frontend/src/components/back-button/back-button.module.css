@@ -1,0 +1,15 @@
+.backButton {
+  all: unset;
+  display: flex;
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  user-select: none;
+  cursor: pointer;
+  border-radius: var(--border-radius-1);
+  padding: 10px;
+
+  &:active {
+    background-color: var(--light-gray-1)
+  }
+}

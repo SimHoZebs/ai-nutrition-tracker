@@ -2,4 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  line-height: initial;
+}
+
+.counter {
+  display: flex;
+  align-items: end;
 }

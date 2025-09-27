@@ -1,22 +1,62 @@
-import Button from "../../components/button/button.tsx";
-import Card from "../../components/card/card.tsx";
-import NutrientCard from "../../components/nutrient-card/nutrient-card.tsx";
+import styles from "./dashboard.module.css"
+import Button from "../../components/button/button.tsx"
+import NutrientCard from "../../components/nutrient-card/nutrient-card.tsx"
+import {Icon} from "@iconify/react";
+import Divider from "../../components/divider/divider.tsx";
+import {useNavigate} from "react-router";
+import MealCard from "../../components/meal-card/meal-card.tsx";
 
 export default function Dashboard() {
-  return (
-    <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <Button variant="primary" text="Get started" />
-      <Button variant="secondary" text="Get started" />
-      <Card variant="plain">
-        Hello!
-      </Card>
+  const navigate = useNavigate();
 
-      <div style={{ display: 'grid', gridTemplateColumns: '50% 50%', gridTemplateRows: '50% 50%', gap: '10px' }}>
-        <NutrientCard />
-        <NutrientCard />
+  return (
+    <>
+      <h1>LazyFood.</h1>
+
+      <h2>Today's Goals</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50% 50%', gap: '10px' }}>
         <NutrientCard />
         <NutrientCard />
       </div>
-    </div>
+
+      <Divider />
+
+      <h2>Today's Meals</h2>
+      <MealCard />
+      <MealCard />
+      <MealCard />
+
+      <Divider />
+
+      <h2>Log your Meal</h2>
+      <div className={styles.logButtonContainer}>
+        <Button
+          variant="primary"
+          size="lg"
+          fill
+        >
+          <div className={styles.logButton}>
+            <Icon icon="material-symbols:photo-camera-outline-rounded" width={28} />
+            Camera
+          </div>
+        </Button>
+
+        <div className={styles.logButtonContainerRight}>
+          <Button variant="secondary" size="md" onClick={() => navigate("/text-log")}>
+            <div className={styles.logButton}>
+              <Icon icon="material-symbols:business-messages-outline-rounded" width={24} />
+              Text
+            </div>
+          </Button>
+
+          <Button variant="secondary" size="md">
+            <div className={styles.logButton}>
+              <Icon icon="mdi:microphone-outline" width={24} />
+              Speak
+            </div>
+          </Button>
+        </div>
+      </div>
+    </>
   )
 }

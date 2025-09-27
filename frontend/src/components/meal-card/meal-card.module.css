@@ -1,0 +1,9 @@
+.mealCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.subText {
+  color: var(--note);
+  font-size: var(--font-size-0);
+}

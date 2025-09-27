@@ -1,4 +1,4 @@
-import {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import styles from './card.module.css';
 import clsx from 'clsx';
 
@@ -17,6 +17,7 @@ export default function Card({variant = 'plain', className = "", children}: Card
         [className]: true,
       })}
     >
+      {}
       {children}
     </div>
   );
