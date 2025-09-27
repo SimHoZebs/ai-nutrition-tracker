@@ -51,7 +51,7 @@ def analyze_food(request):
 
     # Create or update session
     session_url = (
-        f"{agent_base_url}/apps/food-text/users/{user_id}/sessions/{session_id}"
+        f"{agent_base_url}/apps/food_text/users/{user_id}/sessions/{session_id}"
     )
     session_response = requests.post(session_url, json={"state": {}})
     if session_response.status_code not in [200, 201]:
@@ -64,7 +64,7 @@ def analyze_food(request):
     agent_response = requests.post(
         f"{agent_base_url}/run",
         json={
-            "app_name": "food-text",
+            "app_name": "food_text",
             "user_id": user_id,
             "session_id": session_id,
             "new_message": {"role": "user", "parts": [{"text": food_description}]},
