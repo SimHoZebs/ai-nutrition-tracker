@@ -29,4 +29,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/transcribe/', views.transcribe_audio, name='transcribe'),
+    path('api/food/analyze-text/', views.analyze_food, name='analyze_food'),
 ]

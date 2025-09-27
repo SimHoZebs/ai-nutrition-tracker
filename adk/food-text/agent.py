@@ -8,6 +8,57 @@ from google.adk.tools.base_tool import BaseTool
 from google.genai import types
 from typing import Any, Optional
 import json
+from pydantic import BaseModel, RootModel
+
+
+class Qna(BaseModel):
+    question: str
+    type: str  # e.g., "slider" or "multiple_choice"
+    mcqOptions: list[str]
+    sliderValue: int
+
+
+class FoodItem(BaseModel):
+    name: str
+    quantity: float = 1.0
+    unit: str = "serving"
+
+
+class ParsedFoods(BaseModel):
+    foods: list[FoodItem]
+    questions: list[Qna]
+
+
+class Nutrition(BaseModel):
+    calories: float
+    protein_g: float
+    carbs_g: float
+    fat_g: float
+
+    class Config:
+        extra = "allow"
+
+
+class FoodResult(BaseModel):
+    name: str
+    nutrition: Nutrition
+    serving_size: str
+
+
+class FoodSearchOutput(BaseModel):
+    questions: list[Qna]
+    foods: list[FoodResult]
+
+
+class TotalNutrition(BaseModel):
+    total_calories: float
+    total_protein_g: float
+    total_carbs_g: float
+    total_fat_g: float
+
+    class Config:
+        extra = "allow"
+
 
 GEMINI_MODEL = "gemini-2.5-flash"
 
@@ -53,15 +104,12 @@ def before_food_search_callback(
     args: dict[str, Any],
     tool_context: ToolContext,
 ) -> Optional[dict]:
-    parsed_foods = tool_context.state.get("parsed_foods", "")
+    parsed_foods = tool_context.state.get("parsed_foods", {})
     print(f"Parsed foods for food search: {parsed_foods}")
-    if len(parsed_foods) == 0:
-        return None
-    parsed_foods_json = json.loads(parsed_foods)
 
-    questions = parsed_foods_json.get("questions", [])
+    questions = parsed_foods.get("questions", [])
     if questions:
-        return {"questions": questions}
+        return {"questions": questions, "foods": []}
     return None
 
 
@@ -98,9 +146,10 @@ input_parser_agent = LlmAgent(
     model=GEMINI_MODEL,
     instruction="""Parse the user's food description into a JSON object with "foods" list and "questions" list.
     Extract name, quantity (default 1), and unit (default 'serving').
-    Check if any food name is too vague (e.g., "chicken" without specifying type or preparation). If vague, add clarifying questions like "What type of chicken?" or "How was it prepared?". Do not question reasonable assumptions like salt on fries.
-    Example output: {"foods": [{"name": "apple", "quantity": 2, "unit": "pieces"}], "questions": []} or {"foods": [{"name": "chicken", "quantity": 1, "unit": "serving"}], "questions": ["What type of chicken (e.g., breast, thigh, whole)?", "How was it prepared (e.g., grilled, fried, baked)?"]}.
+    Check if any food name is too vague (e.g., "chicken" without specifying type or preparation). If vague, add clarifying questions with type "multiple_choice" and up to three educated guess options for the user to choose from before providing their own input. Do not question reasonable assumptions like salt on fries.
+    Example output: {"foods": [{"name": "apple", "quantity": 2, "unit": "pieces"}], "questions": []} or {"foods": [{"name": "chicken", "quantity": 1, "unit": "serving"}], "questions": [{"question": "What type of chicken?", "type": "multiple_choice", "mcqOptions": ["breast", "thigh", "whole"]}, {"question": "How was it prepared?", "type": "multiple_choice", "mcqOptions": ["grilled", "fried", "baked"]}]}.
     Do not return in codeblock. Only return valid JSON.""",
+    output_schema=ParsedFoods,
     output_key="parsed_foods",
 )
 
@@ -112,11 +161,12 @@ food_search_agent = LlmAgent(
 For each food in {parsed_foods}['foods'], call search_usda and search_off with the food name.
 For each food, select the best matching result from combined API data (prioritize USDA for accuracy if duplicates).
 Extract nutrition per serving (e.g., calories, protein, carbs, fat) and serving size.
-Output a list of dicts: [{"name": "apple", "nutrition": {"calories": 95, "protein_g": 0.5, ...}, "serving_size": "1 medium"}, ...].
+Output {"questions": [], "foods": [{"name": "apple", "nutrition": {"calories": 95, "protein_g": 0.5, ...}, "serving_size": "1 medium"}, ...]}.
 Handle missing data gracefully.
 Do not return in codeblock. Only return valid JSON.""",
     tools=[search_usda, search_off],
     output_key="search_result",
+    output_schema=FoodSearchOutput,
     before_tool_callback=before_food_search_callback,
 )
 
@@ -130,6 +180,7 @@ Sum nutrition values across all foods.
 Output total nutrition as a dict: {"total_calories": 200, "total_protein_g": 5, ...}.
 Do not return in codeblock. Only return valid JSON.""",
     output_key="final_result",
+    output_schema=TotalNutrition,
     before_model_callback=before_calculator_callback,
 )
 

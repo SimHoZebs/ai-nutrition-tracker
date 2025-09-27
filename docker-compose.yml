@@ -29,6 +29,7 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - GOOGLE_APPLICATION_CREDENTIALS=/app/engaged-cargo-473407-f9-b459010050b9.json
+      - AGENT_BASE_URL=http://adk:8080
     depends_on:
       db:
         condition: service_healthy
