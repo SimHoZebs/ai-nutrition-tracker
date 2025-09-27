@@ -3,3 +3,8 @@
   flex-direction: column;
   gap: 5px;
 }
+
+.counter {
+  display: flex;
+  align-items: end;
+}

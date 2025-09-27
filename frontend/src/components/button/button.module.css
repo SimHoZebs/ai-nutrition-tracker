@@ -5,7 +5,7 @@
   padding: 5px 20px;
   font-size: var(--font-size-1);
   user-select: none;
-  border: 1px solid transparent;
+  border: 0.05rem solid transparent;
   font-weight: bold;
   transition: background-color 80ms;
 
