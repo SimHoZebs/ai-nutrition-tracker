@@ -5,14 +5,19 @@ html {
   --primary-lighter-1: #288cff;
   --primary-darker-1: #0072ef;
 
+  --primary-faded: #a6ceff;
+
   --light-gray-1: #f8f8f8;
   --light-gray-2: #c7c7c7;
+  --dark-gray-1: #696969;
 
   --border: var(--light-gray-2);
+  --note: var(--dark-gray-1);
 
   --black: #161616;
 
   --font-size-1: 18px;
+  --font-size-2: 24px;
 }
 
 :root {

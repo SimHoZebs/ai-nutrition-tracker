@@ -5,6 +5,8 @@ import {createBrowserRouter, RouterProvider} from "react-router";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import Dashboard from "./routes/dashboard/dashboard.tsx";
 import Onboarding from "./routes/onboarding/onboarding.tsx";
+import LogWithText from "./routes/log-with-text/log-with-text.tsx";
+import FollowUp from "./routes/follow-up/follow-up.tsx";
 
 const queryClient = new QueryClient()
 
@@ -16,6 +18,14 @@ const router = createBrowserRouter([
   {
     path: '/onboarding',
     Component: Onboarding,
+  },
+  {
+    path: '/text-log',
+    Component: LogWithText,
+  },
+  {
+    path: '/follow-up',
+    Component: FollowUp,
   }
 ])
 

@@ -3,17 +3,21 @@ import styles from './button.module.css'
 import clsx from "clsx";
 
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'danger'
-  text?: string
+  variant?: 'primary' | 'secondary' | 'danger',
+  size?: 'md' | 'lg',
+  text?: string,
   fill?: boolean,
+  disabled?: boolean,
   onClick?: () => void,
-  children?: ReactNode[] | ReactNode;
+  children?: ReactNode[] | ReactNode,
 }
 
 export default function Button({
   variant = 'primary',
+  size = 'md',
   text,
   fill = false,
+  disabled = false,
   onClick = () => {},
   children = [],
 }: ButtonProps) {
@@ -25,6 +29,9 @@ export default function Button({
         [styles.primary]: variant === 'primary',
         [styles.secondary]: variant === 'secondary',
         [styles.danger]: variant === 'danger',
+        [styles.large]: size === 'lg',
+        [styles.medium]: size === 'md',
+        [styles.disabled]: disabled,
       })}
       onClick={onClick}
     >
