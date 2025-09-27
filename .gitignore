@@ -225,6 +225,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# GCP credentials
+*engaged-cargo*.json
+gcp-key.json
+
 # Spyder project settings
 .spyderproject
 .spyproject
