@@ -1,0 +1,40 @@
+.baseButton {
+  all: unset;
+  display: flex;
+  border-radius: var(--border-radius-1);
+  padding: 5px 20px;
+  font-size: var(--font-size-1);
+  user-select: none;
+  border: 1px solid transparent;
+  font-weight: bold;
+  transition: background-color 80ms;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+}
+
+.primary {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary-darker-1);
+
+  &:active {
+    background-color: var(--primary-lighter-1);
+  }
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--black);
+  border-color: var(--border);
+}
+
+.danger {
+
+}
+
+.fill {
+
+}

@@ -1,0 +1,15 @@
+.card {
+  display: flex;
+  padding: 15px;
+  border: solid 0.05rem transparent;
+  border-radius: var(--border-radius-1);
+}
+
+.plain {
+  background: linear-gradient(135deg, white, var(--light-gray-1));
+  border-color: var(--border);
+}
+
+.blue {
+
+}
