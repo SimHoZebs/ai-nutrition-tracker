@@ -32,4 +32,4 @@ COPY . .
 EXPOSE 8080
 
 # Run the ADK API server
-CMD ["adk", "api_server", "--host", "0.0.0.0", "--port", "8080", "/app"]
+CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8080", "/app"]
