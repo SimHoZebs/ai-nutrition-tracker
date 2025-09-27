@@ -8,6 +8,7 @@ ENV DJANGO_SETTINGS_MODULE=nutrition_tracker.settings
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry

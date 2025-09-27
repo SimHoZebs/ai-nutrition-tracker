@@ -1,12 +1,10 @@
 import os
-from random import Random
 import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from google.cloud import speech
 import uuid
-import json
 
 
 @api_view(["POST"])

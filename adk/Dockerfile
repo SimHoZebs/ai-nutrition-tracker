@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 # Install system dependencies (if needed for google-adk)
 RUN apt-get update && apt-get install -y \
     gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
