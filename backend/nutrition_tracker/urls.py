@@ -29,4 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/transcribe/', views.transcribe_audio, name='transcribe'),
+    path('api/usda/search/', foods_views.search_usda_foods, name='usda_search'),
+    path('api/usda/food/<int:fdc_id>/', foods_views.get_usda_food_details, name='usda_food_details'),
 ]
