@@ -28,6 +28,7 @@ class AgentFoodResponseSerializer(serializers.ModelSerializer):
     trans_fat_g = serializers.FloatField(
         source="trans_fat", required=False, default=0.0
     )
+    eaten_at = serializers.DateTimeField(required=False)
 
     class Meta:
         model = Food
@@ -37,6 +38,7 @@ class AgentFoodResponseSerializer(serializers.ModelSerializer):
             "serving_size",
             "calories",
             "others",
+            "eaten_at",
             "protein_g",
             "carbs_g",
             "saturated_fat_g",

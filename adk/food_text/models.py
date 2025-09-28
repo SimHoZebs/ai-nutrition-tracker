@@ -10,6 +10,7 @@ class Qna(BaseModel):
 
 class Food(BaseModel):
     name: str
+    eaten_at: str
     serving_size: float
     calories: float
     protein: float
@@ -24,6 +25,7 @@ class Food(BaseModel):
 class UnknownFood(BaseModel):
     name: str
     description: str
+    eaten_at: str
     meal_type: str
     quantity: float = 1.0
     unit: str = "serving"
@@ -36,6 +38,7 @@ class ParsedFoods(BaseModel):
 
 class FoodSearchResult(BaseModel):
     name: str
+    eaten_at: str
     meal_type: str
     serving_size: int = 1
     calories: float = 0.0

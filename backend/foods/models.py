@@ -22,6 +22,7 @@ class Food(models.Model):
     meal_type = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    eaten_at = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="foods")
 
     def __str__(self):
