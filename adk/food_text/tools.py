@@ -12,38 +12,14 @@ import json
 
 def strip_code_blocks(text: str) -> str:
     """Strip markdown code blocks from text if present."""
-    if text.startswith('```') and text.endswith('```'):
-        lines = text.split('\n')
-        if lines and lines[0].startswith('```'):
+    if text.startswith("```") and text.endswith("```"):
+        lines = text.split("\n")
+        if lines and lines[0].startswith("```"):
             lines = lines[1:]
-        if lines and lines[-1] == '```':
+        if lines and lines[-1] == "```":
             lines = lines[:-1]
-        return '\n'.join(lines).strip()
+        return "\n".join(lines).strip()
     return text
-
-
-# Define API tools
-def search_usda(query: str) -> dict:
-    """Search USDA FoodData Central for foods matching the query."""
-    api_key = os.getenv("USDA_API_KEY", "DEMO_KEY")
-    url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={api_key}&query={query}"
-    response = requests.get(url)
-    print(f"USDA api response status: {response.status_code}")
-    return (
-        response.json() if response.status_code == 200 else {"error": "USDA API failed"}
-    )
-
-
-def search_off(query: str) -> dict:
-    """Search OpenFoodFacts for products matching the query."""
-    headers = {
-        "User-Agent": "NutritionTracker/1.0 (contact@example.com)"
-    }  # Custom User-Agent
-    url = f"https://world.openfoodfacts.org/api/v2/search?q={query}"
-    response = requests.get(url, headers=headers)
-    return (
-        response.json() if response.status_code == 200 else {"error": "OFF API failed"}
-    )
 
 
 # Helper function to remove condition line from request
@@ -65,10 +41,9 @@ def before_food_search_callback(
     tool_context: ToolContext,
 ) -> Optional[dict]:
     parsed_foods = tool_context.state.get("parsed_foods", {})
-    print(f"Parsed foods for food search: {parsed_foods}")
 
     questions = parsed_foods.get("questions", [])
-    if questions:
+    if len(questions) > 0:
         return {"questions": questions, "foods": []}
     return None
 
