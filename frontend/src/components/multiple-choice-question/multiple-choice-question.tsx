@@ -11,6 +11,13 @@ interface MultipleChoiceQuestionProps {
 export default function MultipleChoiceQuestion({question, choices, onSelect}: MultipleChoiceQuestionProps) {
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
 
+  const handleSelect = (index: number) => {
+    setSelectedChoice(index);
+    if (onSelect) {
+      onSelect(choices[index]);
+    }
+  };
+
   return (
     <div className={styles.multipleChoiceContainer}>
       <h2>{question}</h2>
@@ -20,7 +27,7 @@ export default function MultipleChoiceQuestion({question, choices, onSelect}: Mu
             key={index}
             variant={index === selectedChoice ? 'primary' : 'secondary'}
             text={choice}
-            onClick={() => setSelectedChoice(index)}
+            onClick={() => handleSelect(index)}
           />
         ))}
       </div>

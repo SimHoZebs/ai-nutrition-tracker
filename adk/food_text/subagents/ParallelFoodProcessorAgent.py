@@ -5,10 +5,7 @@ from typing import AsyncGenerator
 from google.genai import types
 from google.adk.tools import google_search
 from food_text.models import *
-from food_text.tools import (
-    strip_code_blocks,
-    before_food_search_callback,
-)
+from food_text.tools import strip_code_blocks
 
 GEMINI_MODEL = "gemini-2.5-flash"
 
@@ -38,11 +35,17 @@ class ParallelFoodProcessorAgent(BaseAgent):
         foods = parsed_foods.get("foods", [])
         for food in foods:
             food_name = food["name"].replace(" ", "_").replace("-", "_")
+            # Inject food data directly into instruction to avoid context contamination
+            food_data = json.dumps(food)
+
             # Sub-agent for searching foods in this meal
             food_search_agent = LlmAgent(
                 name=f"FoodSearchAgent_{food_name}",
                 model=GEMINI_MODEL,
-                instruction=f"""Output ONLY a JSON array conforming to the RequestResponse schema: a list of FoodSearchResult objects, each with "name" string, "meal_type" string or null, "serving_size" int default 1, "calories" float default 0.0, "protein_g" float default 0.0, "carbs_g" float default 0.0, "trans_fat_g" float default 0.0, "saturated_fat_g" float default 0.0, "unsaturated_fat_g" float default 0.0, "others" dict default empty.
+                instruction=f"""You are processing this specific food item: {food_data}
+
+                Output ONLY a JSON array conforming to the RequestResponse schema: a list of FoodSearchResult objects, each with "name" string, "meal_type" string or null, "serving_size" int default 1, "calories" float default 0.0, "protein_g" float default 0.0, "carbs_g" float default 0.0, "trans_fat_g" float default 0.0, "saturated_fat_g" float default 0.0, "unsaturated_fat_g" float default 0.0, "others" dict default empty.
+
                 Use google search to verify the nutrition value based on usda and openfoodfoundation.
                 Select the best matching result from the search results.
                 Output {{"name": "McDonald's cheeseburger", "meal_type": null, "serving_size": 1, "calories": 540.0, "protein_g": 25.0, "carbs_g": 45.0, "trans_fat_g": 1.5, "saturated_fat_g": 12.0, "unsaturated_fat_g": 8.0, "others": {{"sodium_mg": 1040}}}}, ....
@@ -50,7 +53,7 @@ class ParallelFoodProcessorAgent(BaseAgent):
                 IMPORTANT: Return ONLY the JSON array. Do not wrap in markdown, code blocks, backticks, or any formatting. No ```json or extra text.""",
                 tools=[google_search],
                 output_key=f"search_result_{food_name}",
-                before_tool_callback=before_food_search_callback,
+                # Removed before_tool_callback since each agent has its own food data
             )
             sub_agents.append(food_search_agent)
         # Run parallel processing for all meals
