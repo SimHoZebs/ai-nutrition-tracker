@@ -2,6 +2,7 @@ from datetime import datetime
 from google.adk.agents import LlmAgent
 from google.genai import types
 from food_text.models import ParsedFoods
+from food_text.tools import lookup_existing_meal, process_question_answers, pass_to_next_agent
 
 GEMINI_MODEL = "gemini-2.5-flash"
 
@@ -25,6 +26,12 @@ def provide_previous_context_for_answers(callback_context):
         callback_context.state["previous_ambiguous_foods"] = ambiguous_foods
         callback_context.state["previous_questions"] = questions
 
+    elif intent.get("type") == "update_meal":
+        # Add looked up meal context for updates
+        # The agent framework stores tool results in state
+        looked_up_meal = callback_context.state.get("lookup_existing_meal", {})
+        callback_context.state["existing_meal"] = looked_up_meal
+
     return None
 
 
@@ -37,9 +44,12 @@ input_parser_agent = LlmAgent(
 CONDITIONAL BEHAVIOR BASED ON INTENT:
 
 If intent.type == "new_meal":
-Parse the user's food description into a JSON object conforming to the ParsedFoods schema: a JSON object with "foods" (list of UnknownFood objects, each with "name" string, "description" string, "eaten_at" string, "meal_type" string, "quantity" float default 1.0, "unit" string default "serving", "ambiguous" bool default false) and "questions" (list of question objects, each with "question" string, "type" string e.g. "multiple_choice", "mcqOptions" list of strings, "sliderValue" int).
+Parse the user's food description into a JSON object conforming to the ParsedFoods schema: a JSON object with "foods" (list of UnknownFood objects, each with "name" string, "description" string, "eaten_at" string, "meal_type" string, "quantity" float default 1.0, "unit" string default "serving", "ambiguous" bool default false) and "questions" (list of question objects, each with "question" string, "type" string, "mcqOptions" list of strings, "sliderValue" int).
 
-Extract name, quantity (default 1.0), unit (default 'serving'), meal_type, description, and eaten_at. 
+For each food, provide ALL fields: name, description, eaten_at, meal_type, quantity, unit, ambiguous.
+
+If intent.type == "needs_clarification":
+Parse the ambiguous food input and generate clarification questions. Set ambiguous=true for foods that need clarification, and provide appropriate questions.
 
 For eaten_at, parse time references from user input:
 - If no time mentioned: use current datetime
@@ -54,12 +64,12 @@ For eaten_at, parse time references from user input:
 - Specific times like "2 hours ago": subtract from current datetime
 - Always return eaten_at as ISO datetime string (YYYY-MM-DDTHH:MM:SS format)
 
-Set ambiguous to true if the food name is too vague for accurate nutritional value determination (e.g., "chicken" without specifying type or preparation). If ambiguous, add clarifying questions with type "multiple_choice" and up to three educated guess options for the user to choose from. Do not question reasonable assumptions! For example, assume there are salt on fries and steaks are seasoned. Take branded food as they are unless specified otherwise. Only set ambiguous=true if absolutely necessary for accurate nutrition estimation.
+If ambiguous, add clarifying questions. For multiple_choice questions, provide: question, type="multiple_choice", mcqOptions (list of options), sliderValue=0. For slider questions, provide: question, type="slider", mcqOptions=[], sliderValue (default value).
 
 If intent.type == "update_meal":
 1. Use the lookup_existing_meal tool to find the meal being referenced
-2. Parse the update operations from the user's input (change, add, remove)
-3. Return ParsedFoods format with the update operations and target meal info
+2. Access the existing_meal from session state (set by callback)
+3. Return ParsedFoods format with the existing foods (including their IDs) for updating
 
 If intent.type == "answer_question":
 1. Access the previous parsed_foods context from the callback state
@@ -69,11 +79,12 @@ If intent.type == "answer_question":
 5. Return ParsedFoods format with ALL foods (both resolved and non-ambiguous) ready for processing
 6. Set questions=[] since all ambiguity has been resolved
 
-Example new_meal output: {{"foods": [{{"name": "apple", "description": "red apple", "eaten_at": "2025-09-28T08:00:00", "meal_type": "Breakfast", "quantity": 2.0, "unit": "pieces", "ambiguous": false}}], "questions": []}}.
+Example new_meal output: {{"foods": [{{"name": "apple", "description": "red apple", "eaten_at": "2025-09-28T08:00:00", "meal_type": "Breakfast", "quantity": 2.0, "unit": "pieces"}}], "questions": []}}.
 
 IMPORTANT: Return ONLY the JSON object. Do not wrap in markdown, code blocks, backticks, or any formatting. No ```json or extra text.""",
     output_schema=ParsedFoods,
     output_key="parsed_foods",
     before_agent_callback=provide_previous_context_for_answers,
+    tools=[lookup_existing_meal, process_question_answers, pass_to_next_agent],
 )
 

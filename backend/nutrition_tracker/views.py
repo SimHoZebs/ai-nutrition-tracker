@@ -34,31 +34,30 @@ def transcribe_audio(request):
         print(f"Transcription: '{transcription}'")
 
         return Response({"transcription": transcription})
-        
+
     except Exception as e:
         error_msg = str(e)
         if "Invalid recognition 'config'" in error_msg or "bad encoding" in error_msg:
             return Response(
                 {"error": "Invalid audio format. Please upload a valid audio file."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
             {"error": "Audio transcription failed. Please try again."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
 @api_view(["POST"])
 def reset_database(request):
     try:
-        call_command('flush', verbosity=0, interactive=False)
-        
+        call_command("flush", verbosity=0, interactive=False)
+
         return Response(
-            {"message": "Database reset successfully"},
-            status=status.HTTP_200_OK
+            {"message": "Database reset successfully"}, status=status.HTTP_200_OK
         )
     except Exception as e:
         return Response(
             {"error": f"Database reset failed: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

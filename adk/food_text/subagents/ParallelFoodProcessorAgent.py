@@ -44,12 +44,13 @@ class ParallelFoodProcessorAgent(BaseAgent):
                 model=GEMINI_MODEL,
                 instruction=f"""You are processing this specific food item: {food_data}
 
-                Output ONLY a JSON array conforming to the RequestResponse schema: a list of FoodSearchResult objects, each with "name" string, "eaten_at" string, "meal_type" string or null, "serving_size" int default 1, "calories" float default 0.0, "protein_g" float default 0.0, "carbs_g" float default 0.0, "trans_fat_g" float default 0.0, "saturated_fat_g" float default 0.0, "unsaturated_fat_g" float default 0.0, "others" dict default empty.
+                Output ONLY a JSON array conforming to the RequestResponse schema: a list of FoodSearchResult objects, each with "id" (int or null), "name" string, "eaten_at" string, "meal_type" string or null, "serving_size" int default 1, "calories" float default 0.0, "protein_g" float default 0.0, "carbs_g" float default 0.0, "trans_fat_g" float default 0.0, "saturated_fat_g" float default 0.0, "unsaturated_fat_g" float default 0.0, "others" dict default empty.
 
                 Use google search to verify the nutrition value based on usda and openfoodfoundation.
                 Select the best matching result from the search results.
                 IMPORTANT: Preserve the eaten_at timestamp from the input food data exactly as provided.
-                Output {{"name": "McDonald's cheeseburger", "eaten_at": "2025-09-28T19:00:00", "meal_type": "Dinner", "serving_size": 1, "calories": 540.0, "protein_g": 25.0, "carbs_g": 45.0, "trans_fat_g": 1.5, "saturated_fat_g": 12.0, "unsaturated_fat_g": 8.0, "others": {{"sodium_mg": 1040}}}}, ....
+                IMPORTANT: If the input food data has an "id" field, include it in the output FoodSearchResult.
+                Output {{"id": null, "name": "McDonald's cheeseburger", "eaten_at": "2025-09-28T19:00:00", "meal_type": "Dinner", "serving_size": 1, "calories": 540.0, "protein_g": 25.0, "carbs_g": 45.0, "trans_fat_g": 1.5, "saturated_fat_g": 12.0, "unsaturated_fat_g": 8.0, "others": {{"sodium_mg": 1040}}}}, ....
                 Handle missing data gracefully.
                 IMPORTANT: Return ONLY the JSON array. Do not wrap in markdown, code blocks, backticks, or any formatting. No ```json or extra text.""",
                 tools=[google_search],

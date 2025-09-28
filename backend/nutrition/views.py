@@ -25,10 +25,7 @@ def create_foods_from_data(foods_data, user):
     """Create Food objects using the AgentFoodResponseSerializer"""
     created_foods = []
     for food_data in foods_data:
-        serializer = AgentFoodResponseSerializer(
-            data=food_data,
-            context={'user': user}
-        )
+        serializer = AgentFoodResponseSerializer(data=food_data, context={"user": user})
         if serializer.is_valid():
             food_obj = serializer.save()
             created_foods.append(food_obj)
@@ -37,6 +34,26 @@ def create_foods_from_data(foods_data, user):
             print(f"Invalid food data: {serializer.errors}")
             print(f"Food data was: {food_data}")
     return created_foods
+
+
+def update_existing_foods(foods_data, user):
+    """Update existing Food objects based on agent response data"""
+    updated_foods = []
+    for food_data in foods_data:
+        if 'id' in food_data:
+            try:
+                food = Food.objects.get(id=food_data['id'], user=user)
+                serializer = AgentFoodResponseSerializer(food, data=food_data, partial=True, context={"user": user})
+                if serializer.is_valid():
+                    food_obj = serializer.save()
+                    updated_foods.append(food_obj)
+                    print(f"Updated food entry: {food_obj.name} (ID: {food_obj.id})")
+                else:
+                    print(f"Invalid update data: {serializer.errors}")
+                    print(f"Food data was: {food_data}")
+            except Food.DoesNotExist:
+                print(f"Food with id {food_data['id']} not found for user {user}")
+    return updated_foods
 
 
 def call_agent_api(agent_base_url, user_id, session_id, message_text):
@@ -56,6 +73,7 @@ def process_agent_response(content, user, clear_session_callback=None):
     print(f"Agent response content: {content}")
     questions = content.get("questions", [])
     foods = content.get("foods", [])
+    request_type = content.get("request_type", "new")
 
     # Check for questions/foods in parts structure
     if "parts" in content and content["parts"]:
@@ -88,6 +106,9 @@ def process_agent_response(content, user, clear_session_callback=None):
     elif foods:
         print(f"No questions - saving {len(foods)} foods to database")
         try:
+            if request_type == "update":
+                update_existing_foods(foods, user)
+
             # Use the serializer to handle field mapping and validation
             created_foods = create_foods_from_data(foods, user)
             serialized_foods = FoodSerializer(created_foods, many=True).data
