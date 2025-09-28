@@ -8,4 +8,4 @@ class FoodViewSet(viewsets.ModelViewSet):
     serializer_class = FoodSerializer
 
     def get_queryset(self):
-        return Food.objects.filter(user=self.request.user)
+        return Food.objects.filter(user=self.request.user).order_by("-created_at")

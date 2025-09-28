@@ -21,7 +21,8 @@ export default function Dashboard() {
       }
 
       return resp as FoodEntry[]
-    }
+    },
+    staleTime: 5000,
   })
 
   return (
@@ -54,7 +55,12 @@ export default function Dashboard() {
 
       <h2>Log your Meal</h2>
       <div className={styles.logButtonContainer}>
-        <Button variant="primary" size="lg" fill>
+        <Button
+          variant="primary"
+          size="lg"
+          fill
+          onClick={() => navigate("/photo-log")}
+        >
           <div className={styles.logButton}>
             <Icon
               icon="material-symbols:photo-camera-outline-rounded"

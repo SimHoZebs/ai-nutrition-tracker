@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation} from "@tanstack/react-query";
 import {handleRequest} from "../../util.ts";
 import {useEffect} from "react";
 

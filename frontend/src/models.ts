@@ -14,6 +14,11 @@ export interface LogResponse {
   questions: Question[],
 }
 
+export interface QuestionResponse {
+  questions: Question[],
+  status: string,
+}
+
 export interface User {
   id: number,
   username: string,
@@ -62,4 +67,5 @@ export interface FoodEntry {
   created_at: string,
   updated_at: string,
   user_id: number,
+  processing?: boolean,
 }

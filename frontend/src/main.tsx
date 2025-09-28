@@ -16,6 +16,7 @@ import AddMemory from "./routes/add-memory/add-memory.tsx";
 import FoodEntry from "./routes/food-entry/food-entry.tsx";
 import EditValue from "./routes/edit-value/edit-value.tsx";
 import Logout from "./routes/logout/logout.tsx";
+import LogWithPhoto from "./routes/log-with-photo/log-with-photo.tsx";
 
 const queryClient = new QueryClient()
 
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
   {
     path: '/text-log',
     Component: LogWithText,
+  },
+  {
+    path: '/photo-log',
+    Component: LogWithPhoto,
   },
   {
     path: '/follow-up',

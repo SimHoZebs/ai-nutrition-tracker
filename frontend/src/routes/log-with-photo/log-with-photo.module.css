@@ -1,11 +1,9 @@
-.logWithTextContainer {
+.container {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   justify-content: center;
-  width: 100%;
-  gap: 10px;
-  flex-grow: 1;
+  gap: 20px;
+  height: 100%;
   transform: translateY(-30px)
 }
 
