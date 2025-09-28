@@ -1,0 +1,19 @@
+.label{
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.form{
+  flex-direction: column;
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 28rem;
+  margin-top: 0.25rem;
+}
+
+.container{
+  width: 100%;
+}
