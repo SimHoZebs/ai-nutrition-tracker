@@ -13,6 +13,8 @@ import RootLayout from "./routes/root-layout/root-layout.tsx";
 import Signup from './routes/signup/signup.tsx';
 import Login from './routes/login/login.tsx';
 import AddMemory from "./routes/add-memory/add-memory.tsx";
+import FoodEntry from "./routes/food-entry/food-entry.tsx";
+import EditValue from "./routes/edit-value/edit-value.tsx";
 
 const queryClient = new QueryClient()
 
@@ -58,6 +60,14 @@ const router = createBrowserRouter([
     path: "/signup",
     Component: Signup
   },
+  {
+    path: 'food-entry',
+    Component: FoodEntry,
+  },
+  {
+    path: 'edit-value',
+    Component: EditValue,
+  }
 ])
 
 createRoot(document.getElementById('root')!).render(

@@ -1,6 +1,5 @@
 import styles from "./dashboard.module.css"
 import Button from "../../components/button/button.tsx"
-import NutrientCard from "../../components/nutrient-card/nutrient-card.tsx"
 import {Icon} from "@iconify/react";
 import Divider from "../../components/divider/divider.tsx";
 import {useNavigate} from "react-router";
@@ -15,8 +14,6 @@ export default function Dashboard() {
 
       <h2>Today's Goals</h2>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50% 50%', gap: '10px' }}>
-        <NutrientCard />
-        <NutrientCard />
       </div>
 
       <Divider />

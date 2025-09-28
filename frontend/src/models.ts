@@ -46,3 +46,20 @@ export interface Memory {
   updated_at: string,
   user_id: number,
 }
+
+export interface FoodEntry {
+  id: number,
+  name: string,
+  serving_size: number,
+  calories: number,
+  protein: number,
+  carbohydrates: number,
+  trans_fat: number,
+  saturated_fat: number,
+  unsaturated_fat: number,
+  others: unknown,
+  meal_type: string,
+  created_at: string,
+  updated_at: string,
+  user_id: number,
+}
