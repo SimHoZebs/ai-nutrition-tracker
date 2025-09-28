@@ -15,6 +15,7 @@ import Login from './routes/login/login.tsx';
 import AddMemory from "./routes/add-memory/add-memory.tsx";
 import FoodEntry from "./routes/food-entry/food-entry.tsx";
 import EditValue from "./routes/edit-value/edit-value.tsx";
+import Logout from "./routes/logout/logout.tsx";
 
 const queryClient = new QueryClient()
 
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     Component: Login
+  },
+  {
+    path: "/logout",
+    Component: Logout,
   },
   {
     path: "/signup",

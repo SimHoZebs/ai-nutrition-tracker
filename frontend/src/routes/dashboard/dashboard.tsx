@@ -1,6 +1,5 @@
 import styles from "./dashboard.module.css"
 import Button from "../../components/button/button.tsx"
-import NutrientCard from "../../components/nutrient-card/nutrient-card.tsx"
 import {Icon} from "@iconify/react";
 import Divider from "../../components/divider/divider.tsx";
 import {useNavigate} from "react-router";

@@ -45,7 +45,8 @@ export default function UserProfile() {
 
         <div className={styles.userHeaderRight}>
           <h2>{userQuery.data?.user.first_name} {userQuery.data?.user.last_name}</h2>
-          <p>{userQuery.data?.user.email}</p>
+          <p style={{ marginBottom: '5px' }}>{userQuery.data?.user.email}</p>
+          <Button variant="secondary" text="Logout" onClick={() => navigate('/logout')} />
         </div>
       </div>
 
@@ -60,10 +61,7 @@ export default function UserProfile() {
         </div>
 
         {memoriesQuery.data?.map((memory) => (
-          <>
-            <MemoryItem memory={memory} />
-            <Divider />
-          </>
+          <MemoryItem key={memory.id} memory={memory} />
         ))}
 
       </div>
