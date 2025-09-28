@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import uuid
 from foods.models import Food
-from foods.serializers import FoodSerializer
+from foods.serializers import FoodSerializer, AgentFoodResponseSerializer
 from nutrition.utils import transcribe_audio_content
 
 
@@ -22,23 +22,20 @@ def validate_authentication(user):
 
 
 def create_foods_from_data(foods_data, user):
+    """Create Food objects using the AgentFoodResponseSerializer"""
     created_foods = []
-    for food in foods_data:
-        food_obj = Food.objects.create(
-            name=food.get("name", ""),
-            meal_type=food.get("meal_type"),
-            serving_size=food.get("serving_size", 100),
-            calories=food.get("calories", 0.0),
-            protein=food.get("protein", 0.0),
-            carbohydrates=food.get("carbohydrates", 0.0),
-            trans_fat=food.get("trans_fat", 0.0),
-            saturated_fat=food.get("saturated_fat", 0.0),
-            unsaturated_fat=food.get("unsaturated_fat", 0.0),
-            others=food.get("others", {}),
-            user=user,
+    for food_data in foods_data:
+        serializer = AgentFoodResponseSerializer(
+            data=food_data,
+            context={'user': user}
         )
-        created_foods.append(food_obj)
-        print(f"Created food entry: {food_obj.name} (ID: {food_obj.id})")
+        if serializer.is_valid():
+            food_obj = serializer.save()
+            created_foods.append(food_obj)
+            print(f"Created food entry: {food_obj.name} (ID: {food_obj.id})")
+        else:
+            print(f"Invalid food data: {serializer.errors}")
+            print(f"Food data was: {food_data}")
     return created_foods
 
 
@@ -60,12 +57,38 @@ def process_agent_response(content, user, clear_session_callback=None):
     questions = content.get("questions", [])
     foods = content.get("foods", [])
 
+    # Check for questions/foods in parts structure
+    if "parts" in content and content["parts"]:
+        for part in content["parts"]:
+            if "text" in part:
+                try:
+                    import json
+
+                    text_content = json.loads(part["text"])
+
+                    # Check if this part contains questions
+                    if isinstance(text_content, dict) and "questions" in text_content:
+                        questions.extend(text_content["questions"])
+
+                    # Check if this part contains foods (as JSON array)
+                    elif isinstance(text_content, list) and len(text_content) > 0:
+                        # Assume this is a list of foods if it has typical food fields
+                        if all(
+                            isinstance(item, dict) and "name" in item
+                            for item in text_content
+                        ):
+                            foods.extend(text_content)
+
+                except (json.JSONDecodeError, TypeError):
+                    continue
+
     if questions:
         print(f"Questions detected: {questions}")
         return content
     elif foods:
         print(f"No questions - saving {len(foods)} foods to database")
         try:
+            # Use the serializer to handle field mapping and validation
             created_foods = create_foods_from_data(foods, user)
             serialized_foods = FoodSerializer(created_foods, many=True).data
 
