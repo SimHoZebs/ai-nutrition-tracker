@@ -18,9 +18,9 @@ export default function LogWithText() {
     mutationFn: async (mealDescription: string) => {
       const body = {
         food_description: mealDescription,
-      }
-      const jsonRes = await handleRequest("POST", '/api/food/analyze-text/', body)
-      return JSON.parse(jsonRes?.['parts']?.[0]?.['text'])
+      };
+      const jsonRes = await handleRequest("POST", "/api/process/", body);
+      return JSON.parse(jsonRes?.["parts"]?.[0]?.["text"]);
     },
     onSuccess: (result: LogResponse) => {
       console.log(result)
