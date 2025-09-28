@@ -19,16 +19,28 @@ def transcribe_audio(request):
     config = speech.RecognitionConfig(
         language_code="en-US",
         use_enhanced=True,
-        sample_rate_hertz=44100,
     )
 
-    response = client.recognize(config=config, audio=audio)
+    try:
+        response = client.recognize(config=config, audio=audio)
 
-    transcription = ""
-    for result in response.results:
-        transcription += result.alternatives[0].transcript
+        transcription = ""
+        for result in response.results:
+            transcription += result.alternatives[0].transcript
 
-    print(f"Results: {len(response.results)}")
-    print(f"Transcription: '{transcription}'")
+        print(f"Results: {len(response.results)}")
+        print(f"Transcription: '{transcription}'")
 
-    return Response({"transcription": transcription})
+        return Response({"transcription": transcription})
+        
+    except Exception as e:
+        error_msg = str(e)
+        if "Invalid recognition 'config'" in error_msg or "bad encoding" in error_msg:
+            return Response(
+                {"error": "Invalid audio format. Please upload a valid audio file."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            {"error": "Audio transcription failed. Please try again."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

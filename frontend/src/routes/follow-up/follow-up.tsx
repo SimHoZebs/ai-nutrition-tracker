@@ -72,8 +72,8 @@ export default function FollowUp() {
       <Divider />
 
       <Button
-        onClick={() => {
-          submitMutation.mutate();
+        onClickAsync={async () => {
+          await submitMutation.mutateAsync();
           navigate("/");
         }}
         variant="primary"

@@ -1,5 +1,6 @@
 import styles from "./button.module.css";
 import clsx from "clsx";
+import { useState } from "react";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger";
@@ -7,6 +8,7 @@ interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   text?: string;
   fill?: boolean;
   disabled?: boolean;
+  onClickAsync?: () => Promise<void>;
 }
 
 export default function Button({
@@ -16,8 +18,20 @@ export default function Button({
   fill = false,
   disabled = false,
   onClick = () => {},
+  onClickAsync,
   children = [],
 }: ButtonProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClickAsync) {
+      setIsLoading(true);
+      await onClickAsync();
+      setIsLoading(false);
+    } else {
+      onClick(e);
+    }
+  };
   return (
     <button
       className={clsx({
@@ -28,11 +42,12 @@ export default function Button({
         [styles.danger]: variant === "danger",
         [styles.large]: size === "lg",
         [styles.medium]: size === "md",
-        [styles.disabled]: disabled,
+        [styles.disabled]: disabled || isLoading,
       })}
-      onClick={(e) => onClick(e)}
+      onClick={handleClick}
+      disabled={disabled || isLoading}
     >
-      {text ? text : children}
+      {isLoading ? <div className={styles.spinner} /> : text ? text : children}
     </button>
   );
 }
