@@ -1,14 +1,16 @@
 from pydantic import BaseModel, RootModel
+from typing import Optional
 
 
 class Qna(BaseModel):
     question: str
     type: str  # e.g., "slider" or "multiple_choice"
-    mcqOptions: list[str]
-    sliderValue: int
+    mcqOptions: list[str] = []
+    sliderValue: int = 0
 
 
 class Food(BaseModel):
+    id: Optional[int] = None
     name: str
     eaten_at: str
     serving_size: float
@@ -23,20 +25,24 @@ class Food(BaseModel):
 
 
 class UnknownFood(BaseModel):
+    id: Optional[int] = None
     name: str
-    description: str
+    description: str = ""
     eaten_at: str
     meal_type: str
     quantity: float = 1.0
     unit: str = "serving"
+    ambiguous: bool = False
 
 
 class ParsedFoods(BaseModel):
     foods: list[UnknownFood] = []
     questions: list[Qna] = []
+    id: Optional[str] = None
 
 
 class FoodSearchResult(BaseModel):
+    id: Optional[int] = None
     name: str
     eaten_at: str
     meal_type: str
@@ -55,5 +61,7 @@ class Intent(BaseModel):
     reasoning: str  # Brief explanation of classification
 
 
-class RequestResponse(RootModel[list[FoodSearchResult]]):
+class RequestResponse(BaseModel):
+    foods: list[FoodSearchResult]
+    request_type: str  # "new" or "update"
     pass
