@@ -1,7 +1,5 @@
 from django.db import models
 
-from users.models import User
-
 
 class Food(models.Model):
     name = models.CharField(max_length=255)
@@ -22,7 +20,6 @@ class Food(models.Model):
     meal_type = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="foods")
 
     def __str__(self):
         return self.name

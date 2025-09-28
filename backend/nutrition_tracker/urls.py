@@ -20,6 +20,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from foods import views as foods_views
 from users import views as users_views
+from nutrition import views as nutrition_views
 from . import views
 
 router = DefaultRouter()
@@ -31,7 +32,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/transcribe/", views.transcribe_audio, name="transcribe"),
-    path("api/food/analyze-text/", views.analyze_food, name="analyze_food"),
+    path("api/process/", nutrition_views.process_request, name="analyze_food"),
     path("api/login/", users_views.LoginView.as_view(), name="login"),
     path("api/register/", users_views.RegisterView.as_view(), name="register"),
     path("api/logout/", users_views.LogoutView.as_view(), name="logout"),
