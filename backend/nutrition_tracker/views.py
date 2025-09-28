@@ -75,7 +75,7 @@ def analyze_food(request):
     print(f"Agent response content: {content}")
 
     if agent_response.status_code == 200:
-        return Response(agent_response.json()[0].get("content", {}))
+        return Response(agent_response.json()[-1].get("content", {}))
     else:
         return Response(
             {"error": "Agent call failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR

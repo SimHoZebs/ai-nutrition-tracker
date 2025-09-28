@@ -28,23 +28,13 @@ class ParallelFoodProcessorAgent(BaseAgent):
             # Return the questions as the final response, skipping this agent
             content = types.Content(
                 role="assistant",
-                parts=[
-                    types.Part(
-                        text=json.dumps(
-                            {
-                                "questions": parsed_foods["questions"],
-                                "status": "questions_pending",
-                            }
-                        )
-                    )
-                ],
+                parts=[types.Part(text=json.dumps(parsed_foods))],
             )
             yield Event(author=self.name, content=content)
             return
 
         parsed_foods = invocation_context.session.state.get("parsed_foods", {})
         sub_agents = []
-        print("Parsed foods for parallel processing:", parsed_foods)
         foods = parsed_foods.get("foods", [])
         for food in foods:
             food_name = food["name"].replace(" ", "_").replace("-", "_")
@@ -70,11 +60,9 @@ class ParallelFoodProcessorAgent(BaseAgent):
             description="Runs meal processors concurrently for speed.",
         )
         async for event in parallel_agent.run_async(invocation_context):
-            print(f"Parallel agent event: {event}")
             yield event
         # Collect results into state for merging
         meal_nutritions = []
-        print("Collecting meal nutritions for merging.")
         for food in parsed_foods.get("foods", []):
             food_name = food["name"].replace(" ", "_")
             # Parse the search_result text

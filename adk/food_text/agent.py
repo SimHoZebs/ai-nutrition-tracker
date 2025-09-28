@@ -1,14 +1,5 @@
-import json
 from google.adk.agents import SequentialAgent, LlmAgent, ParallelAgent, BaseAgent
-from google.adk.events import Event
-from typing import AsyncGenerator
-from google.genai import types
-from google.adk.tools import google_search
 from food_text.models import *
-from food_text.tools import (
-    strip_code_blocks,
-    before_food_search_callback,
-)
 from food_text.callbacks.before_merger import skip_merger_if_questions_pending
 from food_text.subagents.ParallelFoodProcessorAgent import ParallelFoodProcessorAgent
 
@@ -20,9 +11,9 @@ GEMINI_MODEL = "gemini-2.5-flash"
 input_parser_agent = LlmAgent(
     name="InputParserAgent",
     model=GEMINI_MODEL,
-    instruction="""Parse the user's food description into a JSON object conforming to the ParsedFoods schema: a JSON object with "foods" (list of UnknownFood objects, each with "name" string, "description" string, "meal_type" string, "quantity" float default 1.0, "unit" string default "serving", "ambiguous" bool default false) and "questions" (list of question objects, each with "question" string, "type" string e.g. "multiple_choice", "mcqOptions" list of strings, "sliderValue" int).
-Extract name, quantity (default 1.0), unit (default 'serving'), meal_type, and description. Set ambiguous to true if the food name is too vague for accurate nutritional value determination (e.g., "chicken" without specifying type or preparation). If ambiguous, add clarifying questions with type "multiple_choice" and up to three educated guess options for the user to choose from. Do not question reasonable assumptions! For example, assume there are salt on fries and steaks are seasoned. Take branded food as they are unless specified otherwise. Only set ambiguous=true if absolutely necessary for accurate nutrition estimation.
-Example output: {"foods": [{"name": "apple", "description": "red apple", "meal_type": "Breakfast", "quantity": 2.0, "unit": "pieces", "ambiguous": false}, {"name": "chicken", "description": "chicken meat", "meal_type": "Lunch", "quantity": 1.0, "unit": "serving", "ambiguous": true}], "questions": [{"question": "What type of chicken?", "type": "multiple_choice", "mcqOptions": ["breast", "thigh", "whole"], "sliderValue": 0}, {"question": "How was it prepared?", "type": "multiple_choice", "mcqOptions": ["grilled", "fried", "baked"], "sliderValue": 0}]}.
+    instruction="""Parse the user's food description into a JSON object conforming to the ParsedFoods schema: a JSON object with "foods" (list of UnknownFood objects, each with "name" string, "description" string, "meal_type" string, "quantity" float default 1.0, "unit" string default "serving",) and "questions" (list of question objects, each with "question" string, "type" string e.g. "multiple_choice", "mcqOptions" list of strings, "sliderValue" int).
+Extract name, quantity (default 1.0), unit (default 'serving'), meal_type, and description. If ambiguous, add clarifying questions with type "multiple_choice" and up to three educated guess options for the user to choose from. Do not question reasonable assumptions! For example, assume chicken is lean unless expliciltly mentioned fried. Assume french fries are salted and steaks are seasoned. Take branded food as they are unless specified otherwise.
+Example output: {"foods": [{"name": "apple", "description": "red apple", "meal_type": "Breakfast", "quantity": 2.0, "unit": "pieces" }, {"name": "chicken", "description": "chicken meat", "meal_type": "Lunch", "quantity": 1.0, "unit": "serving" }], "questions": [{"question": "What type of chicken?", "type": "multiple_choice", "mcqOptions": ["breast", "thigh", "whole"], "sliderValue": 0}, {"question": "How was it prepared?", "type": "multiple_choice", "mcqOptions": ["grilled", "fried", "baked"], "sliderValue": 0}]}.
 IMPORTANT: Return ONLY the JSON object. Do not wrap in markdown, code blocks, backticks, or any formatting. No ```json or extra text.""",
     output_schema=ParsedFoods,
     output_key="parsed_foods",

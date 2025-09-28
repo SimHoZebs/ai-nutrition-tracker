@@ -27,7 +27,6 @@ class UnknownFood(BaseModel):
     meal_type: str
     quantity: float = 1.0
     unit: str = "serving"
-    ambiguous: bool = False
 
 
 class ParsedFoods(BaseModel):
