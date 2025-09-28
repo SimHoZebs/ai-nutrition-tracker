@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import CustomFood
+from .models import Food
 
-class CustomFoodSerializer(serializers.ModelSerializer):
+
+class FoodSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomFood
-        fields = '__all__'
+        model = Food
+        fields = "__all__"

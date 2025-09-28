@@ -5,6 +5,8 @@ import Button from "../../components/button/button.tsx";
 import {useState} from "react";
 import {useNavigate} from "react-router";
 import {useMutation} from "@tanstack/react-query";
+import {handleRequest} from "../../util.ts";
+import type {LogResponse} from "../../models.ts";
 
 export default function LogWithText() {
   const navigate = useNavigate();
@@ -15,16 +17,19 @@ export default function LogWithText() {
   const submitMutation = useMutation({
     mutationFn: async (mealDescription: string) => {
       const body = {
-        description: mealDescription,
+        food_description: mealDescription,
       }
-      const res = await fetch('http://localhost:1234/api/do_smth', {
-        method: 'POST',
-        body: JSON.stringify(body),
-      })
-      return res.json()
+      const jsonRes = await handleRequest("POST", '/api/food/analyze-text/', body)
+      return JSON.parse(jsonRes?.['parts']?.[0]?.['text'])
     },
-    onSuccess: async (result: string) => {
-      console.log(result);
+    onSuccess: (result: LogResponse) => {
+      console.log(result)
+
+      if (result.questions.length > 0) {
+        navigate('/follow-up', { state: { followUpQuestions: result.questions } })
+      } else {
+        navigate('/')
+      }
     }
   });
 
@@ -46,7 +51,6 @@ export default function LogWithText() {
       <TextArea value={descriptionValue} onChange={setDescriptionValue} />
       <Button variant="primary" text="Log" disabled={isLoading} onClick={submitLog} />
 
-      {submitMutation.isSuccess && submitMutation.data}
       {submitMutation.isError && "Oopsie shit blew up"}
 
       {isLoading && (
