@@ -10,6 +10,7 @@ import FollowUp from "./routes/follow-up/follow-up.tsx";
 import History from "./routes/history/history.tsx";
 import UserProfile from "./routes/user-profile/user-profile.tsx";
 import RootLayout from "./routes/root-layout/root-layout.tsx";
+import AddMemory from "./routes/add-memory/add-memory.tsx";
 
 const queryClient = new QueryClient()
 
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: '/follow-up',
     Component: FollowUp,
+  },
+  {
+    path: '/add-memory',
+    Component: AddMemory,
   },
 ])
 

@@ -34,6 +34,13 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+    
+
+class Memory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=200, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 @receiver(post_save, sender=User)
