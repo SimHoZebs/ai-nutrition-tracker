@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import serializers
 from .models import Food
 
@@ -28,7 +30,7 @@ class AgentFoodResponseSerializer(serializers.ModelSerializer):
     trans_fat_g = serializers.FloatField(
         source="trans_fat", required=False, default=0.0
     )
-    eaten_at = serializers.DateTimeField(required=False)
+    eaten_at = serializers.DateTimeField(default=datetime.now())
 
     class Meta:
         model = Food

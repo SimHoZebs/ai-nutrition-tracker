@@ -16,4 +16,5 @@
   background-color: white;
   padding: 20px;
   border-radius: var(--border-radius-1);
+  overflow: hidden;
 }
