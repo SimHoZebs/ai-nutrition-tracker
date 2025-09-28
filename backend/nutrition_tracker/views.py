@@ -71,6 +71,9 @@ def analyze_food(request):
         },
     )
 
+    content = agent_response.json()[0].get("content", {})
+    print(f"Agent response content: {content}")
+
     if agent_response.status_code == 200:
         return Response(agent_response.json()[0].get("content", {}))
     else:

@@ -3,7 +3,6 @@ from django.db import models
 
 class Food(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
     serving_size = models.DecimalField(
         max_digits=10, decimal_places=2, help_text="Serving size in grams"
     )
@@ -13,7 +12,7 @@ class Food(models.Model):
     trans_fat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     saturated_fat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unsaturated_fat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    micros = models.JSONField(
+    others = models.JSONField(
         default=dict,
         blank=True,
         help_text="Micro nutrients as JSON, e.g., {'vitamin_a': 10.5}",

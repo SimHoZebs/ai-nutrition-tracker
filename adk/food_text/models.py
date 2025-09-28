@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 
 class Qna(BaseModel):
@@ -8,59 +8,45 @@ class Qna(BaseModel):
     sliderValue: int
 
 
-class FoodItem(BaseModel):
+class Food(BaseModel):
     name: str
+    serving_size: float
+    calories: float
+    protein: float
+    carbohydrates: float
+    trans_fat: float = 0
+    saturated_fat: float = 0
+    unsaturated_fat: float = 0
+    others: dict = {}
+    meal_type: str
+
+
+class UnknownFood(BaseModel):
+    name: str
+    description: str
+    meal_type: str
     quantity: float = 1.0
     unit: str = "serving"
+    ambiguous: bool = False
 
 
 class ParsedFoods(BaseModel):
-    foods: list[FoodItem]
-    questions: list[Qna]
-
-
-class Nutrition(BaseModel):
-    calories: float
-    protein_g: float
-    carbs_g: float
-    fat_g: float
-
-    class Config:
-        extra = "allow"
-
-
-class FoodResult(BaseModel):
-    name: str
-    nutrition: Nutrition
-    serving_size: str
-
-
-class FoodSearchOutput(BaseModel):
-    questions: list[Qna]
-    foods: list[FoodResult]
-
-
-class TotalNutrition(BaseModel):
-    total_calories: float
-    total_protein_g: float
-    total_carbs_g: float
-    total_fat_g: float
-
-    class Config:
-        extra = "allow"
-
-
-class Meal(BaseModel):
-    name: str
-    foods: list[FoodItem]
+    foods: list[UnknownFood] = []
     questions: list[Qna] = []
 
 
-class ParsedMeals(BaseModel):
-    meals: list[Meal]
+class FoodSearchResult(BaseModel):
+    name: str
+    meal_type: str
+    serving_size: int = 1
+    calories: float = 0.0
+    protein_g: float = 0.0
+    carbs_g: float = 0.0
+    trans_fat_g: float = 0.0
+    saturated_fat_g: float = 0.0
+    unsaturated_fat_g: float = 0.0
+    others: dict = {}
 
 
-class MealNutrition(BaseModel):
-    meal_name: str
-    nutrition: TotalNutrition
-
+class RequestResponse(RootModel[list[FoodSearchResult]]):
+    pass

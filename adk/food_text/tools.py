@@ -12,13 +12,13 @@ import json
 
 def strip_code_blocks(text: str) -> str:
     """Strip markdown code blocks from text if present."""
-    if text.startswith('```') and text.endswith('```'):
-        lines = text.split('\n')
-        if lines and lines[0].startswith('```'):
+    if text.startswith("```") and text.endswith("```"):
+        lines = text.split("\n")
+        if lines and lines[0].startswith("```"):
             lines = lines[1:]
-        if lines and lines[-1] == '```':
+        if lines and lines[-1] == "```":
             lines = lines[:-1]
-        return '\n'.join(lines).strip()
+        return "\n".join(lines).strip()
     return text
 
 
@@ -26,12 +26,13 @@ def strip_code_blocks(text: str) -> str:
 def search_usda(query: str) -> dict:
     """Search USDA FoodData Central for foods matching the query."""
     api_key = os.getenv("USDA_API_KEY", "DEMO_KEY")
-    url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={api_key}&query={query}"
+    print(f"query: {query}")
+    url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={api_key}&query={query}&dataType=Branded,Foundation,Survey%20%28FNDDS%29&pageSize=5&pageNumber=1"
     response = requests.get(url)
-    print(f"USDA api response status: {response.status_code}")
-    return (
-        response.json() if response.status_code == 200 else {"error": "USDA API failed"}
-    )
+
+    foods = response.json().get("foods", [])
+    print("USDA results", foods)
+    return foods[0:5] if response.status_code == 200 else {"error": "USDA API failed"}
 
 
 def search_off(query: str) -> dict:
@@ -39,11 +40,12 @@ def search_off(query: str) -> dict:
     headers = {
         "User-Agent": "NutritionTracker/1.0 (contact@example.com)"
     }  # Custom User-Agent
-    url = f"https://world.openfoodfacts.org/api/v2/search?q={query}"
+    print(f"query: {query}")
+    url = f"https://world.openfoodfacts.org/api/v2/search?q={query}&page_size=5&page=1"
     response = requests.get(url, headers=headers)
-    return (
-        response.json() if response.status_code == 200 else {"error": "OFF API failed"}
-    )
+    products = response.json().get("products", [])
+    print("off results", products)
+    return products[0:5] if response.status_code == 200 else {"error": "OFF API failed"}
 
 
 # Helper function to remove condition line from request
@@ -68,7 +70,7 @@ def before_food_search_callback(
     print(f"Parsed foods for food search: {parsed_foods}")
 
     questions = parsed_foods.get("questions", [])
-    if questions:
+    if len(questions) > 0:
         return {"questions": questions, "foods": []}
     return None
 
@@ -98,3 +100,4 @@ def before_calculator_callback(
     except:
         pass
     return None
+
