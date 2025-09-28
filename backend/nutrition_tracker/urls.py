@@ -23,7 +23,7 @@ from users import views as users_views
 from . import views
 
 router = DefaultRouter()
-router.register(r"custom-foods", foods_views.FoodViewSet)
+router.register(r"foods", foods_views.FoodViewSet)
 router.register(r"user-profiles", users_views.UserProfileViewSet)
 router.register(r"memories", users_views.MemoriesViewSet)
 
