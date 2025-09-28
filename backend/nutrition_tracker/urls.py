@@ -33,6 +33,7 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/transcribe/", views.transcribe_audio, name="transcribe"),
     path("api/process/", nutrition_views.process_request, name="analyze_food"),
+    path("api/resubmit/", nutrition_views.resubmit, name="resubmit"),
     path("api/login/", users_views.LoginView.as_view(), name="login"),
     path("api/register/", users_views.RegisterView.as_view(), name="register"),
     path("api/logout/", users_views.LogoutView.as_view(), name="logout"),
