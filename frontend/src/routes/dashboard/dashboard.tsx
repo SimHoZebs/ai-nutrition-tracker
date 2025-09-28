@@ -3,10 +3,25 @@ import Button from "../../components/button/button.tsx"
 import {Icon} from "@iconify/react";
 import Divider from "../../components/divider/divider.tsx";
 import {useNavigate} from "react-router";
-import MealCard from "../../components/meal-card/meal-card.tsx";
+import FoodCard from "../../components/meal-card/food-card.tsx";
+import {useQuery} from "@tanstack/react-query";
+import {handleRequest} from "../../util.ts";
+import type {FoodEntry} from "../../models.ts";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
+  const historyQuery = useQuery({
+    queryKey: ['history'],
+    queryFn: async () => {
+      const [resp, status] = await handleRequest("GET", "/api/foods/")
+      if (Math.floor(status / 100) !== 2) {
+        throw new Error("Unknown error")
+      }
+
+      return resp as FoodEntry[]
+    }
+  })
 
   return (
     <>
@@ -19,9 +34,20 @@ export default function Dashboard() {
       <Divider />
 
       <h2>Today's Meals</h2>
-      <MealCard />
-      <MealCard />
-      <MealCard />
+      {
+        historyQuery.data?.slice(0, 3).map((item) => (
+          <FoodCard key={item.id} foodEntry={item} />
+        ))
+      }
+
+      {(historyQuery.data?.length ?? 0 > 3) && (
+        <button
+          className={styles.seeMoreLink}
+          onClick={() => {navigate('/history')}}
+        >
+          See more <Icon icon="mdi:arrow-right" />
+        </button>
+      )}
 
       <Divider />
 

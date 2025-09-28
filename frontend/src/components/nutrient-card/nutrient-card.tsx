@@ -9,14 +9,20 @@ interface NutrientCardProps {
   nutrient: string
   count: number
   unit: string
+  onSave: (newValue: string) => void
 }
 
-export default function NutrientCard({ nutrient, count, unit }: NutrientCardProps) {
+export default function NutrientCard({ nutrient, count, unit, onSave }: NutrientCardProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [value, setValue] = useState<string>(count.toString())
 
   const openEditPage = () => {
     setIsOpen(true)
+  }
+
+  const save = () => {
+    setIsOpen(false)
+    onSave(value)
   }
 
   return (
@@ -36,7 +42,7 @@ export default function NutrientCard({ nutrient, count, unit }: NutrientCardProp
             <Textbox value={value} onChange={setValue} />
             <div className={styles.buttons}>
               <Button variant="secondary" text="Cancel" fill onClick={() => {setIsOpen(false)}} />
-              <Button variant="primary" text="Save" fill onClick={() => {}} />
+              <Button variant="primary" text="Save" fill onClick={save} />
             </div>
           </div>
         </Modal>

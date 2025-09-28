@@ -19,6 +19,6 @@
 }
 
 .active {
-  background-color: var(--primary-faded);
+  background-color: var(--primary-faded-2);
   color: black;
 }

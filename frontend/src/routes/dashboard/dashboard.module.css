@@ -16,3 +16,11 @@
   align-items: center;
 }
 
+.seeMoreLink {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-0);
+  color: var(--note);
+}
