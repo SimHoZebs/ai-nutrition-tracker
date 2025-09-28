@@ -15,6 +15,8 @@ interface SignupMutateData {
   password: string,
 }
 
+
+
 export default function Signup(){
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -24,6 +26,8 @@ export default function Signup(){
 
   const lastLocation = useLastLocation()
   const navigate = useNavigate();
+
+
 
   const signupMutation = useMutation({
     mutationKey: ['signup'],
@@ -104,6 +108,7 @@ export default function Signup(){
 
 
         <Button
+         
           onClick={(e) => {
             e.preventDefault()
             signupMutation.mutate({username, firstName, lastName, email, password})
@@ -111,6 +116,12 @@ export default function Signup(){
         >
           Sign Up
         </Button>
+        
+        <p style={{ color: 'var(--note)' }}>
+         Have an account? <a href="/login">Log In here!</a>
+      </p>
+        
+        
 
       </form>
     </CenteredPage>
