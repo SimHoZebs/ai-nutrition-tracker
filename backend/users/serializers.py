@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Memory
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,7 +21,8 @@ class MemorySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     class Meta:
-        fields = '_all_'
+        model = Memory
+        fields = '__all__'
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):

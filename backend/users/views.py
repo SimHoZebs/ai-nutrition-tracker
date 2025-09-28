@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .models import Memory, UserProfile
@@ -10,6 +11,19 @@ from .serializers import MemorySerializer, UserProfileSerializer, UserRegistrati
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+
+    def get_queryset(self):
+        return UserProfile.objects.filter(user=self.request.user)
+
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        user = self.request.user
+        if not user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        user_profile = UserProfile.objects.get(user=user)
+        serializer = UserProfileSerializer(user_profile)
+        return Response(serializer.data)
 
 
 class MemoriesViewSet(viewsets.ModelViewSet):

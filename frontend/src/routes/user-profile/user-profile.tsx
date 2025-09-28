@@ -4,9 +4,38 @@ import Button from "../../components/button/button.tsx";
 import MemoryItem from "../../components/memory-item/memory-item.tsx";
 import Divider from "../../components/divider/divider.tsx";
 import {useNavigate} from "react-router";
+import {useQuery} from "@tanstack/react-query";
+import {handleRequest} from "../../util.ts";
+import type {Memory, UserProfile} from "../../models.ts";
 
 export default function UserProfile() {
   const navigate = useNavigate();
+
+  const userQuery = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const [jsonRes, status] = await handleRequest("GET", "/api/user-profiles/me/")
+      if (Math.floor(status / 100) !== 2) {
+        throw new Error('Unknown error')
+      }
+      return jsonRes as UserProfile
+    }
+  })
+
+  const memoriesQuery = useQuery({
+    queryKey: ["memories"],
+    queryFn: async () => {
+      const [jsonRes, status] = await handleRequest("GET", "/api/memories/")
+      if (Math.floor(status / 100) !== 2) {
+        throw new Error('Unknown error')
+      }
+      return jsonRes as Memory[]
+    }
+  })
+
+  if (userQuery.isLoading || memoriesQuery.isLoading) {
+    return "Loading..."
+  }
 
   return (
     <>
@@ -15,25 +44,28 @@ export default function UserProfile() {
         <Icon icon="ri:user-line" width={85} />
 
         <div className={styles.userHeaderRight}>
-          <h2>John Doe</h2>
-          <p>johndoe@gmail.com</p>
+          <h2>{userQuery.data?.user.first_name} {userQuery.data?.user.last_name}</h2>
+          <p>{userQuery.data?.user.email}</p>
         </div>
       </div>
 
       <div className={styles.section}>
         <div className={styles.buttonHeader}>
           <h2>Memories</h2>
-          <Button variant="primary" text="Add" onClick={() => navigate('/add-memory')} />
+          <Button
+            variant="primary"
+            text="Add"
+            onClick={() => navigate('/add-memory', {state: {lastLocation: '/user'}})}
+          />
         </div>
 
-        <MemoryItem />
-        <Divider />
-        <MemoryItem />
-        <Divider />
-        <MemoryItem />
-        <Divider />
+        {memoriesQuery.data?.map((memory) => (
+          <>
+            <MemoryItem memory={memory} />
+            <Divider />
+          </>
+        ))}
 
-        <MemoryItem />
       </div>
     </>
   )
