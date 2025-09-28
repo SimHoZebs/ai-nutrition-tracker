@@ -1,7 +1,6 @@
 import styles from './back-button.module.css'
 import {Icon} from "@iconify/react";
 import {useLocation, useNavigate} from "react-router";
-import type {Question} from "../../models.ts";
 
 export default function BackButton() {
   const navigate = useNavigate();

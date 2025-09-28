@@ -1,4 +1,4 @@
-import type {ReactNode} from "react";
+import type {ReactNode, MouseEvent} from "react";
 import styles from './button.module.css'
 import clsx from "clsx";
 
@@ -8,7 +8,7 @@ interface ButtonProps {
   text?: string,
   fill?: boolean,
   disabled?: boolean,
-  onClick?: () => void,
+  onClick?: (e: MouseEvent) => void,
   children?: ReactNode[] | ReactNode,
 }
 
@@ -33,7 +33,7 @@ export default function Button({
         [styles.medium]: size === 'md',
         [styles.disabled]: disabled,
       })}
-      onClick={onClick}
+      onClick={(e) => onClick(e)}
     >
       { text ? text : children }
     </button>
