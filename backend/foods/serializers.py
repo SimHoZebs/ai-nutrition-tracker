@@ -42,11 +42,6 @@ class AgentFoodResponseSerializer(serializers.ModelSerializer):
             "saturated_fat_g",
             "unsaturated_fat_g",
             "trans_fat_g",
-            "protein",
-            "carbohydrates",
-            "saturated_fat",
-            "unsaturated_fat",
-            "trans_fat",
         ]
 
     def validate(self, data):

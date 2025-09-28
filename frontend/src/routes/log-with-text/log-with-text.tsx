@@ -5,8 +5,8 @@ import Button from "../../components/button/button.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { handleRequest } from "../../util.ts";
-import type { LogResponse } from "../../models.ts";
+import {checkIfQuestions, handleRequest} from "../../util.ts";
+import type {LogResponse, QuestionResponse} from "../../models.ts";
 
 export default function LogWithText() {
   const navigate = useNavigate();
@@ -19,16 +19,18 @@ export default function LogWithText() {
       const body = {
         food_description: mealDescription,
       };
-      const jsonRes = await handleRequest("POST", "/api/process/", body);
-      console.log(jsonRes);
-      return JSON.parse(jsonRes?.[0]?.["parts"]?.[0]?.["text"]);
+      let [jsonRes, status] = await handleRequest("POST", "/api/process/", body);
+      if (Math.floor(status / 100) !== 2) {
+        throw new Error("Unknown error");
+      }
+      return JSON.parse(jsonRes?.["parts"]?.[0]?.["text"]);
     },
-    onSuccess: (result: LogResponse) => {
-      console.log(result);
+    onSuccess: (result: LogResponse | QuestionResponse) => {
+      const isQuestionResponse = checkIfQuestions(result)
 
-      if (result.questions.length > 0) {
+      if (isQuestionResponse) {
         navigate("/follow-up", {
-          state: { followUpQuestions: result.questions },
+          state: { followUpQuestions: result.questions, description: descriptionValue },
         });
       } else {
         navigate("/");
@@ -38,10 +40,6 @@ export default function LogWithText() {
 
   const submitLog = () => {
     setIsLoading(true);
-    // setTimeout(() => {
-    //   navigate("/follow-up");
-    // }, 1000)
-
     submitMutation.mutate(descriptionValue);
   };
 

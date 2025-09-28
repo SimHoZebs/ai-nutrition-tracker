@@ -1,3 +1,5 @@
+import type {LogResponse, QuestionResponse} from "./models.ts";
+
 export const baseUrl = 'http://localhost:8000'
 
 type HttpMethods = "GET" | "POST" | "PUT" | "DELETE"
@@ -32,4 +34,12 @@ export const getCSRFToken = () => {
     }
   }
   return ''
+}
+
+export const checkIfQuestions = (resp: LogResponse | QuestionResponse) => {
+  if (Array.isArray(resp)) {
+    return false
+  } else {
+    return (resp.questions ?? []).length > 0;
+  }
 }

@@ -13,6 +13,10 @@ import RootLayout from "./routes/root-layout/root-layout.tsx";
 import Signup from './routes/signup/signup.tsx';
 import Login from './routes/login/login.tsx';
 import AddMemory from "./routes/add-memory/add-memory.tsx";
+import FoodEntry from "./routes/food-entry/food-entry.tsx";
+import EditValue from "./routes/edit-value/edit-value.tsx";
+import Logout from "./routes/logout/logout.tsx";
+import LogWithPhoto from "./routes/log-with-photo/log-with-photo.tsx";
 
 const queryClient = new QueryClient()
 
@@ -43,6 +47,10 @@ const router = createBrowserRouter([
     Component: LogWithText,
   },
   {
+    path: '/photo-log',
+    Component: LogWithPhoto,
+  },
+  {
     path: '/follow-up',
     Component: FollowUp,
   },
@@ -55,9 +63,21 @@ const router = createBrowserRouter([
     Component: Login
   },
   {
+    path: "/logout",
+    Component: Logout,
+  },
+  {
     path: "/signup",
     Component: Signup
   },
+  {
+    path: 'food-entry',
+    Component: FoodEntry,
+  },
+  {
+    path: 'edit-value',
+    Component: EditValue,
+  }
 ])
 
 createRoot(document.getElementById('root')!).render(

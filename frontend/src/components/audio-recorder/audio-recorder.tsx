@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { Icon } from "@iconify/react";
 import Button from "../button/button.tsx";
-import type { LogResponse } from "../../models.ts";
+import type {LogResponse, UserProfile} from "../../models.ts";
 import styles from "./audio-recorder.module.css";
+import {handleRequest} from "../../util.ts";
 
 interface AudioRecorderProps {
   variant?: "primary" | "secondary" | "danger";
@@ -22,6 +23,22 @@ export default function AudioRecorder({
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+
+  const userQuery = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const [jsonRes, status] = await handleRequest("GET", "/api/user-profiles/me/")
+      if (Math.floor(status / 100) !== 2) {
+        throw new Error('Unknown error')
+      }
+      return jsonRes as UserProfile
+    },
+    retry: false,
+  })
+
+  if (userQuery.isError) {
+    navigate('/login')
+  }
 
   const submitMutation = useMutation({
     mutationFn: async (audioBlob: Blob) => {
@@ -71,14 +88,14 @@ export default function AudioRecorder({
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           channelCount: 1,
           echoCancellation: true,
           noiseSuppression: true
         }
       });
-      
+
       // Use the browser's default format (usually WEBM OPUS at 48kHz)
       const mediaRecorder = new MediaRecorder(stream);
       let mimeType = "audio/webm";

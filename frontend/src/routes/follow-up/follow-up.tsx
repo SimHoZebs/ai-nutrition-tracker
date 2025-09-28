@@ -4,16 +4,18 @@ import MultipleChoiceQuestion from "../../components/multiple-choice-question/mu
 import Divider from "../../components/divider/divider.tsx";
 import Button from "../../components/button/button.tsx";
 import { useLocation } from "react-router";
-import type { LogResponse, Question } from "../../models.ts";
-import { useMutation } from "@tanstack/react-query";
+import type {FoodEntry, Question} from "../../models.ts";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { handleRequest } from "../../util.ts";
+import {handleRequest} from "../../util.ts";
 
 export default function FollowUp() {
+  const queryClient = useQueryClient();
   const location = useLocation();
   const navigate = useNavigate();
   const followUpQuestions: Question[] = location.state?.followUpQuestions;
+  const description: string = location.state?.description;
   const [mcqResponses, setMcqResponses] = useState<string[]>([]);
 
   const submitMutation = useMutation({
@@ -22,20 +24,14 @@ export default function FollowUp() {
         answers: mcqResponses,
       };
       const jsonRes = await handleRequest("POST", "/api/resubmit/", body);
-      console.log(jsonRes);
       return JSON.parse(jsonRes?.[0]?.["parts"]?.[0]?.["text"]);
     },
-    onSuccess: (result: LogResponse) => {
-      console.log(result);
-
-      if (result.questions && result.questions.length > 0) {
-        navigate("/follow-up", {
-          state: { followUpQuestions: result.questions },
-        });
-      } else {
-        navigate("/");
-      }
-    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['history'] })
+      const oldQueryData: FoodEntry[] = queryClient.getQueryData(['history']) ?? []
+      const newQueryData = [{name: description, processing: true}, ...oldQueryData]
+      queryClient.setQueryData(['history'], newQueryData)
+    }
   });
 
   return (
@@ -72,8 +68,8 @@ export default function FollowUp() {
       <Divider />
 
       <Button
-        onClickAsync={async () => {
-          await submitMutation.mutateAsync();
+        onClick={() => {
+          submitMutation.mutate();
           navigate("/");
         }}
         variant="primary"

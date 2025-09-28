@@ -26,8 +26,8 @@
   }
 
   &.disabled {
-    background-color: var(--primary-faded);
-    border-color: var(--primary-faded);
+    background-color: var(--primary-faded-1);
+    border-color: var(--primary-faded-1);
   }
 }
 
@@ -51,7 +51,7 @@
 }
 
 .fill {
-  flex-grow: 1;
+  flex: 1;
 }
 
 .spinner {
