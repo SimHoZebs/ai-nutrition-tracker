@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 import uuid
 from foods.models import Food
-from .utils import transcribe_audio_content
+from foods.serializers import FoodSerializer
+from nutrition.utils import transcribe_audio_content
 
 
 @api_view(["POST"])
@@ -30,7 +31,13 @@ def process_request(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    user_id = str(request.user.id) if request.user.is_authenticated else "anonymous"
+    # Check if user is authenticated before saving
+    if not request.user.is_authenticated:
+        return Response(
+            {"error": "Authentication required to save foods"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+    user_id = str(request.user.id)
     agent_base_url = os.environ.get("AGENT_BASE_URL", "http://adk:8080")
     session_id = str(uuid.uuid4())
 
@@ -66,6 +73,7 @@ def process_request(request):
     # Handle the case when no questions exist - save foods to database
     if not questions and foods:
         print(f"No questions - saving {len(foods)} foods to database")
+
         try:
             created_foods = []
             for food in foods:
@@ -81,20 +89,22 @@ def process_request(request):
                     saturated_fat=food.get("saturated_fat", 0.0),
                     unsaturated_fat=food.get("unsaturated_fat", 0.0),
                     others=food.get("others", {}),
+                    user=request.user,
                 )
-                created_foods.append(food_obj.id)
+                created_foods.append(food_obj)
                 print(f"Created food entry: {food_obj.name} (ID: {food_obj.id})")
+
+            # Serialize the created food objects
+            serialized_foods = FoodSerializer(created_foods, many=True).data
 
             # Add database info to response
             response_content = content.copy()
-            response_content["food_ids"] = created_foods
-            response_content["saved_to_database"] = True
+            response_content["response"] = serialized_foods
 
         except Exception as e:
             print(f"Error creating food entries: {e}")
             response_content = content.copy()
-            response_content["database_error"] = str(e)
-            response_content["saved_to_database"] = False
+            response_content["error"] = str(e)
     elif questions:
         print(f"Questions detected: {questions}")
         response_content = content
