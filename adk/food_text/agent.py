@@ -5,10 +5,8 @@ from typing import AsyncGenerator
 from google.genai import types
 from google.adk.tools import google_search
 from food_text.models import *
-from food_text.tools import (
-    strip_code_blocks,
-    before_food_search_callback,
-)
+from food_text.tools import strip_code_blocks
+from food_text.callbacks.before_food_search import before_food_search_callback
 
 
 GEMINI_MODEL = "gemini-2.5-flash"
@@ -18,7 +16,7 @@ class ParallelMealProcessorAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="ParallelMealProcessorAgent",
-            before_agent_callback=check_for_ambiguous_foods
+            before_agent_callback=check_for_ambiguous_foods,
         )
 
     async def run_async(self, invocation_context) -> AsyncGenerator[Event, None]:
@@ -79,12 +77,12 @@ def check_for_ambiguous_foods(callback_context):
     """Check for ambiguous foods and return questions if any found"""
     parsed_foods = callback_context.state.get("parsed_foods", {})
     questions = parsed_foods.get("questions", [])
-    
+
     if questions:
         # Derive non_ambiguous_foods on-the-fly
         foods = parsed_foods.get("foods", [])
         non_ambiguous_foods = [f for f in foods if not f.get("ambiguous", False)]
-        
+
         callback_context.state["questions_pending"] = True
         return types.Content(
             role="assistant",
