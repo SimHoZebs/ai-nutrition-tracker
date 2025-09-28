@@ -37,4 +37,5 @@ urlpatterns = [
     path("api/login/", users_views.LoginView.as_view(), name="login"),
     path("api/register/", users_views.RegisterView.as_view(), name="register"),
     path("api/logout/", users_views.LogoutView.as_view(), name="logout"),
+    path("api/reset-db/", views.reset_database, name="reset_database"),
 ]

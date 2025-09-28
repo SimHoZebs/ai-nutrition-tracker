@@ -1,5 +1,5 @@
 # Makefile for AI Nutrition Tracker
-.PHONY: help build up down restart logs migrate makemigrations shell dbshell createsuperuser test clean
+.PHONY: help build up down restart logs migrate makemigrations shell dbshell createsuperuser test clean reset-db
 
 # Default target
 help: ## Show this help message
@@ -40,6 +40,9 @@ createsuperuser: ## Create Django superuser
 
 test: ## Run Django tests
 	docker compose exec api python manage.py test
+
+reset-db: ## Reset the database by calling the API endpoint
+	curl -X POST http://localhost:8000/api/reset-db/
 
 # Utility commands
 clean: ## Remove containers, volumes, and images

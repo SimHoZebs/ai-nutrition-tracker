@@ -2,6 +2,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from google.cloud import speech
+from django.core.management import call_command
+from django.db import connection
 
 
 @api_view(["POST"])
@@ -42,5 +44,21 @@ def transcribe_audio(request):
             )
         return Response(
             {"error": "Audio transcription failed. Please try again."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(["POST"])
+def reset_database(request):
+    try:
+        call_command('flush', verbosity=0, interactive=False)
+        
+        return Response(
+            {"message": "Database reset successfully"},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response(
+            {"error": f"Database reset failed: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
