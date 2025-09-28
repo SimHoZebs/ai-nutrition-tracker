@@ -50,5 +50,10 @@ class FoodSearchResult(BaseModel):
     others: dict = {}
 
 
+class Intent(BaseModel):
+    type: str  # "new_meal", "update_meal", "answer_question"
+    reasoning: str  # Brief explanation of classification
+
+
 class RequestResponse(RootModel[list[FoodSearchResult]]):
     pass
