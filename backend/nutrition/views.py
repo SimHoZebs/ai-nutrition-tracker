@@ -1,3 +1,4 @@
+import base64
 import os
 from datetime import timezone, datetime
 
@@ -6,9 +7,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 import uuid
-from foods.models import Food
 from foods.serializers import FoodSerializer, AgentFoodResponseSerializer
 from nutrition.utils import transcribe_audio_content
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 def create_error_response(message, status_code):
@@ -126,6 +127,9 @@ def process_request(request):
             return create_error_response(
                 "Failed to transcribe audio", status.HTTP_400_BAD_REQUEST
             )
+    elif not food_description and "photo" in request.FILES:
+        # TODO the photo is received here. image/jpeg mime type
+        photo = request.FILES["photo"]
 
     if not food_description:
         return create_error_response(

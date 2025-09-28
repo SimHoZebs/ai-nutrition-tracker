@@ -2,6 +2,7 @@ import styles from './log-with-photo.module.css'
 import CenteredPage from "../../components/centered-page/centered-page.tsx";
 import Button from "../../components/button/button.tsx";
 import {useEffect, useRef, useState} from "react";
+import {handleRequest, handleRequestGeneric} from "../../util.ts";
 import {useMutation} from "@tanstack/react-query";
 import type {LogResponse, QuestionResponse} from "../../models.ts";
 import {checkIfQuestions} from "../../util.ts";
@@ -17,7 +18,17 @@ export default function LogWithPhoto() {
   const submitPhotoMutation = useMutation({
     mutationKey: ['submit-photo'],
     mutationFn: async (photoUrl: string) => {
+      const base64Response = await fetch(photoUrl);
+      const blob = await base64Response.blob();
 
+      const formData = new FormData();
+      formData.append("photo", blob, "photo.jpeg");
+
+      const [jsonRes, status] = await handleRequestGeneric("POST", "/api/process/", formData);
+      if (Math.floor(status / 100) !== 2) {
+        throw new Error('Unknown error')
+      }
+      return jsonRes as LogResponse | QuestionResponse;
     },
     onSuccess: (resp: LogResponse | QuestionResponse) => {
       const isQuestionResponse = checkIfQuestions(resp)

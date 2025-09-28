@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { Icon } from "@iconify/react";
 import Modal from "../modal/modal.tsx";
@@ -16,15 +16,16 @@ interface AIInputModalProps {
 
 export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'text' | 'image'>('text');
   const [textValue, setTextValue] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Audio recording state
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  
+
   // Image upload/capture state
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -75,11 +76,13 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
       if (!res.ok) {
         throw new Error("Failed to process audio");
       }
-
       const jsonRes = await res.json();
-      return JSON.parse(jsonRes?.[0]?.["parts"]?.[0]?.["text"]);
+      return JSON.parse((jsonRes as any)?.["parts"]?.[0]?.["text"]);
     },
     onSuccess: handleSuccess,
+    onError: (error: Error) => {
+      console.log(error)
+    }
   });
 
   const imageMutation = useMutation({
@@ -106,21 +109,22 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
     onSuccess: handleSuccess,
   });
 
-  function handleSuccess(result: LogResponse | QuestionResponse) {
+  async function handleSuccess(result: LogResponse | QuestionResponse) {
     setIsProcessing(false);
     onClose();
-    
+
     const isQuestionResponse = checkIfQuestions(result);
-    
+
     if (isQuestionResponse) {
       navigate("/follow-up", {
-        state: { 
-          followUpQuestions: result.questions, 
-          description: textValue || undefined
+        state: {
+          followUpQuestions: result.questions,
+          description: textValue || "New food"
         },
       });
     } else {
       navigate("/");
+      await queryClient.refetchQueries({ queryKey: ["history"] })
     }
   }
 
@@ -141,7 +145,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
         audio: {
           channelCount: 1,
           echoCancellation: true,
-          noiseSuppression: true
+          noiseSuppression: true,
         }
       });
 
@@ -264,9 +268,9 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
                   disabled={isProcessing}
                   className={styles.audioButton}
                 >
-                  <Icon 
-                    icon={isRecording ? "material-symbols:stop-rounded" : "mdi:microphone-outline"} 
-                    width={20} 
+                  <Icon
+                    icon={isRecording ? "material-symbols:stop-rounded" : "mdi:microphone-outline"}
+                    width={20}
                   />
                   {isRecording ? "Stop" : "Record"}
                 </Button>
@@ -285,7 +289,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
               <p className={styles.description}>
                 Upload a photo of your meal for analysis.
               </p>
-              
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -293,7 +297,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
                 onChange={handleImageSelect}
                 style={{ display: 'none' }}
               />
-              
+
               {imagePreviewUrl ? (
                 <div className={styles.imagePreview}>
                   <img

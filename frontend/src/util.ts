@@ -26,6 +26,27 @@ export async function handleRequest(method: HttpMethods, endpoint: string, jsonB
 
 }
 
+export async function handleRequestGeneric(method: HttpMethods, endpoint: string, body: BodyInit): Promise<[unknown | null, number]> {
+  const res = await fetch(baseUrl + endpoint, {
+    method,
+    body: body,
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'X-CSRFToken': getCSRFToken(),
+    }
+  })
+
+  try {
+    const jsonRes = await res.json()
+    return [jsonRes, res.status]
+  } catch {
+    // JSON was not returned - likely an empty response. Return null.
+    return [null, res.status]
+  }
+
+}
+
 export const getCSRFToken = () => {
   const cookies = document.cookie.split(';')
   for (const cookie of cookies) {
