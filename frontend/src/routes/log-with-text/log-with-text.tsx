@@ -5,7 +5,7 @@ import Button from "../../components/button/button.tsx";
 import {useState} from "react";
 import {useNavigate} from "react-router";
 import {useMutation} from "@tanstack/react-query";
-import {baseUrl} from "../../util.ts";
+import {handleRequest} from "../../util.ts";
 import type {LogResponse} from "../../models.ts";
 
 export default function LogWithText() {
@@ -19,14 +19,7 @@ export default function LogWithText() {
       const body = {
         food_description: mealDescription,
       }
-      const res = await fetch(baseUrl + '/api/food/analyze-text/', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      const jsonRes = await res.json()
+      const jsonRes = await handleRequest("POST", '/api/food/analyze-text/', body)
       return JSON.parse(jsonRes?.['parts']?.[0]?.['text'])
     },
     onSuccess: (result: LogResponse) => {

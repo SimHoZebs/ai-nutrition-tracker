@@ -3,7 +3,11 @@ import {Icon} from "@iconify/react";
 import Button from "../../components/button/button.tsx";
 import MemoryItem from "../../components/memory-item/memory-item.tsx";
 import Divider from "../../components/divider/divider.tsx";
+import {useNavigate} from "react-router";
+
 export default function UserProfile() {
+  const navigate = useNavigate();
+
   return (
     <>
       <h1>Your Profile</h1>
@@ -17,13 +21,9 @@ export default function UserProfile() {
       </div>
 
       <div className={styles.section}>
-        <h2>Goals</h2>
-      </div>
-
-      <div className={styles.section}>
         <div className={styles.buttonHeader}>
           <h2>Memories</h2>
-          <Button variant="primary" text="Add" />
+          <Button variant="primary" text="Add" onClick={() => navigate('/add-memory')} />
         </div>
 
         <MemoryItem />
