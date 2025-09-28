@@ -64,7 +64,7 @@ export interface FoodEntry {
   unsaturated_fat: number,
   others: unknown,
   meal_type: string,
-  created_at: string,
+  eaten_at: string,
   updated_at: string,
   user_id: number,
   processing?: boolean,

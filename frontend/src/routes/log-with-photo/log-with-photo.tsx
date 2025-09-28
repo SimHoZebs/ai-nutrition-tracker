@@ -2,7 +2,7 @@ import styles from './log-with-photo.module.css'
 import CenteredPage from "../../components/centered-page/centered-page.tsx";
 import Button from "../../components/button/button.tsx";
 import {useEffect, useRef, useState} from "react";
-import {handleRequest, handleRequestGeneric} from "../../util.ts";
+import {handleRequestGeneric} from "../../util.ts";
 import {useMutation} from "@tanstack/react-query";
 import type {LogResponse, QuestionResponse} from "../../models.ts";
 import {checkIfQuestions} from "../../util.ts";

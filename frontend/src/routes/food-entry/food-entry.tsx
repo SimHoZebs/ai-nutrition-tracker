@@ -33,7 +33,7 @@ export default function FoodEntry() {
     mutationFn: async ({nutrient, newValue}: NutrientUpdateData) => {
       const foodEntryNew: {[key: string]: string | number | unknown} = {...foodEntryQuery.data!}
       foodEntryNew[nutrient] = newValue
-      delete foodEntryNew['created_at']
+      delete foodEntryNew['eaten_at']
       delete foodEntryNew['user_id']
       delete foodEntryNew['id']
 
@@ -69,7 +69,7 @@ export default function FoodEntry() {
 
       <div className={styles.baseInfoContainer}>
         <h3>Logged at</h3>
-        <p>{new Date(foodEntry.created_at).toLocaleString()}</p>
+        <p>{new Date(foodEntry.eaten_at).toLocaleString()}</p>
         <h3>Meal</h3>
         <p>{foodEntry.meal_type}</p>
       </div>
