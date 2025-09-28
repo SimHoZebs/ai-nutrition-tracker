@@ -41,11 +41,8 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            user_instance = serializer.save()
-            user_instance.first_name = serializer.data['first_name']
-            user_instance.last_name = serializer.data['last_name']
-            user_instance.email = serializer.data['email']
-            user_instance.save()
+            user = serializer.save()
+            login(request, user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
