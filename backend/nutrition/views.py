@@ -1,143 +1,28 @@
 import base64
 import os
-from datetime import timezone, datetime
 
 import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 import uuid
-from foods.serializers import FoodSerializer, AgentFoodResponseSerializer
-from nutrition.utils import transcribe_audio_content
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-
-def create_error_response(message, status_code):
-    return Response({"error": message}, status=status_code)
-
-
-def validate_authentication(user):
-    if not user.is_authenticated:
-        return create_error_response(
-            "Authentication required", status.HTTP_401_UNAUTHORIZED
-        )
-    return None
-
-
-def create_foods_from_data(foods_data, user):
-    """Create Food objects using the AgentFoodResponseSerializer"""
-    created_foods = []
-    for food_data in foods_data:
-        serializer = AgentFoodResponseSerializer(data=food_data, context={"user": user})
-        if serializer.is_valid():
-            food_obj = serializer.save()
-            created_foods.append(food_obj)
-            print(f"Created food entry: {food_obj.name} (ID: {food_obj.id})")
-        else:
-            print(f"Invalid food data: {serializer.errors}")
-            print(f"Food data was: {food_data}")
-    return created_foods
-
-
-def update_existing_foods(foods_data, user):
-    """Update existing Food objects based on agent response data"""
-    updated_foods = []
-    for food_data in foods_data:
-        if 'id' in food_data:
-            try:
-                food = Food.objects.get(id=food_data['id'], user=user)
-                serializer = AgentFoodResponseSerializer(food, data=food_data, partial=True, context={"user": user})
-                if serializer.is_valid():
-                    food_obj = serializer.save()
-                    updated_foods.append(food_obj)
-                    print(f"Updated food entry: {food_obj.name} (ID: {food_obj.id})")
-                else:
-                    print(f"Invalid update data: {serializer.errors}")
-                    print(f"Food data was: {food_data}")
-            except Food.DoesNotExist:
-                print(f"Food with id {food_data['id']} not found for user {user}")
-    return updated_foods
-
-
-def call_agent_api(agent_base_url, user_id, session_id, message_text):
-    agent_response = requests.post(
-        f"{agent_base_url}/run",
-        json={
-            "app_name": "food_text",
-            "user_id": user_id,
-            "session_id": session_id,
-            "new_message": {"role": "user", "parts": [{"text": message_text}]},
-        },
-    )
-    return agent_response
-
-
-def process_agent_response(content, user, clear_session_callback=None):
-    print(f"Agent response content: {content}")
-    questions = content.get("questions", [])
-    foods = content.get("foods", [])
-    request_type = content.get("request_type", "new")
-
-    # Check for questions/foods in parts structure
-    if "parts" in content and content["parts"]:
-        for part in content["parts"]:
-            if "text" in part:
-                try:
-                    import json
-
-                    text_content = json.loads(part["text"])
-
-                    # Check if this part contains questions
-                    if isinstance(text_content, dict) and "questions" in text_content:
-                        questions.extend(text_content["questions"])
-
-                    # Check if this part contains foods (as JSON array)
-                    elif isinstance(text_content, list) and len(text_content) > 0:
-                        # Assume this is a list of foods if it has typical food fields
-                        if all(
-                            isinstance(item, dict) and "name" in item
-                            for item in text_content
-                        ):
-                            foods.extend(text_content)
-
-                except (json.JSONDecodeError, TypeError):
-                    continue
-
-    if questions:
-        print(f"Questions detected: {questions}")
-        return content
-    elif foods:
-        print(f"No questions - saving {len(foods)} foods to database")
-        try:
-            if request_type == "update":
-                update_existing_foods(foods, user)
-
-            # Use the serializer to handle field mapping and validation
-            created_foods = create_foods_from_data(foods, user)
-            serialized_foods = FoodSerializer(created_foods, many=True).data
-
-            response_content = content.copy()
-            response_content["response"] = serialized_foods
-
-            if clear_session_callback:
-                clear_session_callback()
-
-            return response_content
-        except Exception as e:
-            print(f"Error creating food entries: {e}")
-            response_content = content.copy()
-            response_content["error"] = str(e)
-            return response_content
-    else:
-        print("No foods or questions detected in agent response")
-        if clear_session_callback:
-            clear_session_callback()
-        return content
+from nutrition.utils import (
+    transcribe_audio_content,
+    create_error_response,
+    validate_authentication,
+)
+from nutrition.agent import (
+    build_agent_payload,
+    send_agent_request,
+    process_agent_response,
+)
+from users.utils import get_user_memory
 
 
 @api_view(["POST"])
 def process_request(request):
     food_description = request.data.get("food_description")
+    image_data = None
 
     if not food_description and "audio" in request.FILES:
         audio_file = request.FILES["audio"]
@@ -148,13 +33,21 @@ def process_request(request):
             return create_error_response(
                 "Failed to transcribe audio", status.HTTP_400_BAD_REQUEST
             )
-    elif not food_description and "photo" in request.FILES:
-        # TODO the photo is received here. image/jpeg mime type
-        photo = request.FILES["photo"]
 
-    if not food_description:
+    # Handle photo uploads (can be combined with text)
+    if "photo" in request.FILES:
+        photo = request.FILES["photo"]
+        photo_content = photo.read()
+        photo_base64 = base64.b64encode(photo_content).decode("utf-8")
+        image_data = {
+            "mimeType": photo.content_type,
+            "data": photo_base64
+        }
+
+    if not food_description and not image_data:
         return create_error_response(
-            "food_description or audio file required", status.HTTP_400_BAD_REQUEST
+            "food_description, audio file, or photo required",
+            status.HTTP_400_BAD_REQUEST,
         )
 
     # Check authentication
@@ -179,10 +72,19 @@ def process_request(request):
             "Failed to create session", status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
+    # Get user memory for personalization
+    user_memory = get_user_memory(request.user)
+    personalization = {"memory": user_memory} if user_memory else None
+
     # Call the agent
-    agent_response = call_agent_api(
-        agent_base_url, user_id, session_id, food_description
+    payload = build_agent_payload(
+        user_id,
+        session_id,
+        food_description,
+        image_data,
+        personalization,
     )
+    agent_response = send_agent_request(agent_base_url, payload)
 
     if agent_response.status_code != 200:
         return create_error_response(
@@ -190,6 +92,7 @@ def process_request(request):
         )
 
     content = agent_response.json()[-1].get("content", {})
+    print("agent response", content)
     response_content = process_agent_response(content, request.user)
 
     return Response(response_content)
@@ -227,8 +130,15 @@ def resubmit(request):
         [f"Answer {i+1}: {answer}" for i, answer in enumerate(answers)]
     )
 
+    # Get user memory for personalization
+    user_memory = get_user_memory(request.user)
+    personalization = {"memory": user_memory} if user_memory else None
+
     # Call the agent with the answers using the stored session_id
-    agent_response = call_agent_api(agent_base_url, user_id, session_id, answer_text)
+    payload = build_agent_payload(
+        user_id, session_id, answer_text, None, personalization
+    )
+    agent_response = send_agent_request(agent_base_url, payload)
 
     if agent_response.status_code != 200:
         return create_error_response(

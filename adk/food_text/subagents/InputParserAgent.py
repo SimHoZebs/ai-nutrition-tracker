@@ -2,7 +2,11 @@ from datetime import datetime
 from google.adk.agents import LlmAgent
 from google.genai import types
 from food_text.models import ParsedFoods
-from food_text.tools import lookup_existing_meal, process_question_answers, pass_to_next_agent
+from food_text.tools import (
+    lookup_existing_meal,
+    process_question_answers,
+    pass_to_next_agent,
+)
 
 GEMINI_MODEL = "gemini-2.5-flash"
 
@@ -10,6 +14,13 @@ GEMINI_MODEL = "gemini-2.5-flash"
 def provide_previous_context_for_answers(callback_context):
     """Provide previous context when answering questions"""
     intent = callback_context.state.get("intent", {})
+
+    # Always provide personalization context
+    personalization = callback_context.state.get("personalization", {})
+    user_memory = personalization.get("memory", [])
+    if user_memory:
+        callback_context.state["user_memory"] = user_memory
+
     if intent.get("type") == "answer_question":
         # Add previous parsed_foods context to the agent's instructions
         previous_foods = callback_context.state.get("parsed_foods", {})
@@ -41,6 +52,8 @@ input_parser_agent = LlmAgent(
     model=GEMINI_MODEL,
     instruction=f"""It is currently {datetime.now().isoformat()}.
 
+Consider the user's memory for personalization when parsing food descriptions. User memory contains their past preferences, dietary habits, and context that can help interpret quantities, meal types, and food choices.
+
 CONDITIONAL BEHAVIOR BASED ON INTENT:
 
 If intent.type == "new_meal":
@@ -66,11 +79,6 @@ For eaten_at, parse time references from user input:
 
 If ambiguous, add clarifying questions. For multiple_choice questions, provide: question, type="multiple_choice", mcqOptions (list of options), sliderValue=0. For slider questions, provide: question, type="slider", mcqOptions=[], sliderValue (default value).
 
-If intent.type == "update_meal":
-1. Use the lookup_existing_meal tool to find the meal being referenced
-2. Access the existing_meal from session state (set by callback)
-3. Return ParsedFoods format with the existing foods (including their IDs) for updating
-
 If intent.type == "answer_question":
 1. Access the previous parsed_foods context from the callback state
 2. Take the non-ambiguous foods from the original request (foods where ambiguous=false)
@@ -85,6 +93,5 @@ IMPORTANT: Return ONLY the JSON object. Do not wrap in markdown, code blocks, ba
     output_schema=ParsedFoods,
     output_key="parsed_foods",
     before_agent_callback=provide_previous_context_for_answers,
-    tools=[lookup_existing_meal, process_question_answers, pass_to_next_agent],
+    tools=[process_question_answers, pass_to_next_agent],
 )
-

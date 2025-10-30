@@ -7,7 +7,13 @@ GEMINI_MODEL = "gemini-2.5-flash"
 
 
 def skip_merger_if_questions_pending(callback_context):
-    """Skip merger if questions are pending"""
+    """Skip merger if questions are pending and provide personalization context"""
+    # Always provide personalization context
+    personalization = callback_context.state.get("personalization", {})
+    user_memory = personalization.get("memory", [])
+    if user_memory:
+        callback_context.state["user_memory"] = user_memory
+
     if callback_context.state.get("questions_pending", False):
         # Questions are pending, skip merger execution
         return types.Content(
@@ -32,7 +38,9 @@ def skip_merger_if_questions_pending(callback_context):
 merger_agent = LlmAgent(
     name="NutritionMergerAgent",
     model=GEMINI_MODEL,
-    instruction="""CONDITIONAL BEHAVIOR BASED ON INTENT:
+    instruction="""Consider the user's memory for personalization when merging nutrition data. User memory contains their past preferences and dietary habits that can help ensure the final output aligns with their typical choices and expectations.
+
+CONDITIONAL BEHAVIOR BASED ON INTENT:
 
 If intent.type == "new_meal":
 Output a JSON object conforming to the RequestResponse schema: {"request_type": "new", "foods": list of FoodSearchResult objects}.

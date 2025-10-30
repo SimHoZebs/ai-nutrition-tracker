@@ -1,13 +1,17 @@
 import { useState, useRef } from "react";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { Icon } from "@iconify/react";
 import Modal from "../modal/modal.tsx";
 import Button from "../button/button.tsx";
 import TextArea from "../textarea/textarea.tsx";
-import styles from './ai-input-modal.module.css';
+import styles from "./ai-input-modal.module.css";
 import { handleRequest, checkIfQuestions } from "../../util.ts";
-import type { LogResponse, QuestionResponse, UserProfile } from "../../models.ts";
+import type {
+  LogResponse,
+  QuestionResponse,
+  UserProfile,
+} from "../../models.ts";
 
 interface AIInputModalProps {
   isOpen: boolean;
@@ -17,7 +21,7 @@ interface AIInputModalProps {
 export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<'text' | 'image'>('text');
+  const [activeTab, setActiveTab] = useState<"text" | "image">("text");
   const [textValue, setTextValue] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -32,11 +36,14 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const userQuery = useQuery({
-    queryKey: ['user-profile'],
+    queryKey: ["user-profile"],
     queryFn: async () => {
-      const [jsonRes, status] = await handleRequest("GET", "/api/user-profiles/me/");
+      const [jsonRes, status] = await handleRequest(
+        "GET",
+        "/api/user-profiles/me/",
+      );
       if (Math.floor(status / 100) !== 2) {
-        throw new Error('Unknown error');
+        throw new Error("Unknown error");
       }
       return jsonRes as UserProfile;
     },
@@ -44,13 +51,17 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
   });
 
   if (userQuery.isError) {
-    navigate('/login');
+    navigate("/login");
   }
 
   const textMutation = useMutation({
     mutationFn: async (mealDescription: string) => {
       const body = { food_description: mealDescription };
-      let [jsonRes, status] = await handleRequest("POST", "/api/process/", body);
+      let [jsonRes, status] = await handleRequest(
+        "POST",
+        "/api/process/",
+        body,
+      );
       if (Math.floor(status / 100) !== 2) {
         throw new Error("Unknown error");
       }
@@ -81,14 +92,15 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
     },
     onSuccess: handleSuccess,
     onError: (error: Error) => {
-      console.log(error)
-    }
+      console.log(error);
+    },
   });
 
   const imageMutation = useMutation({
     mutationFn: async (imageFile: File) => {
       const formData = new FormData();
-      formData.append("image", imageFile);
+      formData.append("photo", imageFile);
+      console.log("heloo?");
 
       const res = await fetch("http://localhost:8000/api/process/", {
         method: "POST",
@@ -104,27 +116,32 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
       }
 
       const jsonRes = await res.json();
-      return JSON.parse((jsonRes as any)?.[0]?.["parts"]?.[0]?.["text"]);
+      console.log("image response: ", jsonRes["parts"][0]["text"]);
+      return JSON.parse((jsonRes as any)?.["parts"]?.[0]?.["text"]);
     },
     onSuccess: handleSuccess,
+    onError: (error: Error) => {
+      console.log(error);
+    },
   });
 
   async function handleSuccess(result: LogResponse | QuestionResponse) {
     setIsProcessing(false);
     onClose();
 
+    console.log("result: ", result);
     const isQuestionResponse = checkIfQuestions(result);
 
     if (isQuestionResponse) {
       navigate("/follow-up", {
         state: {
           followUpQuestions: result.questions,
-          description: textValue || "New food"
+          description: textValue || "New food",
         },
       });
     } else {
       navigate("/");
-      await queryClient.refetchQueries({ queryKey: ["history"] })
+      await queryClient.refetchQueries({ queryKey: ["history"] });
     }
   }
 
@@ -146,7 +163,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
           channelCount: 1,
           echoCancellation: true,
           noiseSuppression: true,
-        }
+        },
       });
 
       const mediaRecorder = new MediaRecorder(stream);
@@ -206,7 +223,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
     setSelectedImage(null);
     setImagePreviewUrl(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -239,15 +256,15 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
 
         <div className={styles.tabs}>
           <button
-            className={`${styles.tab} ${activeTab === 'text' ? styles.active : ''}`}
-            onClick={() => setActiveTab('text')}
+            className={`${styles.tab} ${activeTab === "text" ? styles.active : ""}`}
+            onClick={() => setActiveTab("text")}
           >
             <Icon icon="mdi:text" width={20} height={20} />
             Describe
           </button>
           <button
-            className={`${styles.tab} ${activeTab === 'image' ? styles.active : ''}`}
-            onClick={() => setActiveTab('image')}
+            className={`${styles.tab} ${activeTab === "image" ? styles.active : ""}`}
+            onClick={() => setActiveTab("image")}
           >
             <Icon icon="mdi:camera" width={20} height={20} />
             Upload Photo
@@ -255,10 +272,11 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
         </div>
 
         <div className={styles.content}>
-          {activeTab === 'text' && (
+          {activeTab === "text" && (
             <div className={styles.textTab}>
               <p className={styles.description}>
-                Describe your meal with details like portion size and ingredients, or record your voice.
+                Describe your meal with details like portion size and
+                ingredients, or record your voice.
               </p>
               <TextArea value={textValue} onChange={setTextValue} />
               <div className={styles.textActions}>
@@ -269,7 +287,11 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
                   className={styles.audioButton}
                 >
                   <Icon
-                    icon={isRecording ? "material-symbols:stop-rounded" : "mdi:microphone-outline"}
+                    icon={
+                      isRecording
+                        ? "material-symbols:stop-rounded"
+                        : "mdi:microphone-outline"
+                    }
                     width={20}
                   />
                   {isRecording ? "Stop" : "Record"}
@@ -284,7 +306,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
             </div>
           )}
 
-          {activeTab === 'image' && (
+          {activeTab === "image" && (
             <div className={styles.imageTab}>
               <p className={styles.description}>
                 Upload a photo of your meal for analysis.
@@ -295,7 +317,7 @@ export default function AIInputModal({ isOpen, onClose }: AIInputModalProps) {
                 type="file"
                 accept="image/*"
                 onChange={handleImageSelect}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
 
               {imagePreviewUrl ? (

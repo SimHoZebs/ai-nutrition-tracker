@@ -12,7 +12,7 @@ class FoodViewSet(viewsets.ModelViewSet):
     serializer_class = FoodSerializer
 
     def get_queryset(self):
-        return Food.objects.filter(user=self.request.user).order_by("-created_at")
+        return Food.objects.filter(user=self.request.user).order_by("-eaten_at")
 
     @action(detail=False, methods=["get"])
     def lookup(self, request):

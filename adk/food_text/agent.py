@@ -1,5 +1,4 @@
 from google.adk.agents import SequentialAgent
-from google.genai import types
 from food_text.models import *
 from food_text.subagents.IntentClassificationAgent import intent_classification_agent
 from food_text.subagents.InputParserAgent import input_parser_agent

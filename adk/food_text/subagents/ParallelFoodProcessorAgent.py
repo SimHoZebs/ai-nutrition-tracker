@@ -33,6 +33,12 @@ class ParallelFoodProcessorAgent(BaseAgent):
         parsed_foods = invocation_context.session.state.get("parsed_foods", {})
         sub_agents = []
         foods = parsed_foods.get("foods", [])
+
+        # Get user memory for personalization
+        personalization = invocation_context.session.state.get("personalization", {})
+        user_memory = personalization.get("memory", [])
+        memory_context = f"User memory for personalization: {json.dumps(user_memory)}" if user_memory else "No user memory available."
+
         for food in foods:
             food_name = food["name"].replace(" ", "_").replace("-", "_")
             # Inject food data directly into instruction to avoid context contamination
@@ -43,6 +49,10 @@ class ParallelFoodProcessorAgent(BaseAgent):
                 name=f"FoodSearchAgent_{food_name}",
                 model=GEMINI_MODEL,
                 instruction=f"""You are processing this specific food item: {food_data}
+
+                {memory_context}
+
+                Consider the user's memory for personalization when selecting nutrition data. User memory contains their past preferences and dietary habits that can help choose the most appropriate nutrition values.
 
                 Output ONLY a JSON array conforming to the RequestResponse schema: a list of FoodSearchResult objects, each with "id" (int or null), "name" string, "eaten_at" string, "meal_type" string or null, "serving_size" int default 1, "calories" float default 0.0, "protein_g" float default 0.0, "carbs_g" float default 0.0, "trans_fat_g" float default 0.0, "saturated_fat_g" float default 0.0, "unsaturated_fat_g" float default 0.0, "others" dict default empty.
 
