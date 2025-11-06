@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  lightningcss: 1.30.1
+  '@sinclair/typebox': ^0.34.0
+
 importers:
 
   .:
@@ -16,7 +20,7 @@ importers:
     dependencies:
       '@elysiajs/eden':
         specifier: ^1.4.4
-        version: 1.4.4(elysia@1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
+        version: 1.4.4(elysia@1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
       '@expo/vector-icons':
         specifier: ^15.0.3
         version: 15.0.3(expo-font@14.0.9(expo@54.0.22)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -37,7 +41,7 @@ importers:
         version: 2.0.6
       elysia:
         specifier: ^1.4.15
-        version: 1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+        version: 1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
       expo:
         specifier: ~54.0.22
         version: 54.0.22(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.14)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -137,7 +141,7 @@ importers:
     dependencies:
       '@elysiajs/cors':
         specifier: ^1.4.0
-        version: 1.4.0(elysia@1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
+        version: 1.4.0(elysia@1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
       '@langchain/core':
         specifier: ^1.0.3
         version: 1.0.3
@@ -146,7 +150,7 @@ importers:
         version: 1.0.1(@langchain/core@1.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(zod-to-json-schema@3.24.6(zod@4.1.12))(zod@4.1.12)
       elysia:
         specifier: latest
-        version: 1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+        version: 1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
     devDependencies:
       bun-types:
         specifier: latest
@@ -1340,8 +1344,8 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
-  '@sinclair/typebox@0.27.8':
-    resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
+  '@sinclair/typebox@0.34.41':
+    resolution: {integrity: sha512-6gS8pZzSXdyRHTIqoqSVknxolr1kzfy4/CeDnrzsVz8TTIWUbOBr6gnzOmTYJ3eXQNh4IYHIGi5aIL7sOZ2G/g==}
 
   '@sinonjs/commons@3.0.1':
     resolution: {integrity: sha512-K3mCHKQ9sVh8o1C9cxkwxaOmXoAMlDxC1mYyHrjqOWEcBjYr76t96zL2zlj5dUGZ3HSw240X1qgH3Mjf1yJWpQ==}
@@ -2238,7 +2242,7 @@ packages:
   elysia@1.4.15:
     resolution: {integrity: sha512-RaDqqZdLuC4UJetfVRQ4Z5aVpGgEtQ+pZnsbI4ZzEaf3l/MzuHcqSVoL/Fue3d6qE4RV9HMB2rAZaHyPIxkyzg==}
     peerDependencies:
-      '@sinclair/typebox': '>= 0.34.0 < 1'
+      '@sinclair/typebox': ^0.34.0
       '@types/bun': '>= 1.2.0'
       exact-mirror: '>= 0.0.9'
       file-type: '>= 20.0.0'
@@ -2461,7 +2465,7 @@ packages:
   exact-mirror@0.2.3:
     resolution: {integrity: sha512-aLdARfO0W0ntufjDyytUJQMbNXoB9g+BbA8KcgIq4XOOTYRw48yUGON/Pr64iDrYNZKcKvKbqE0MPW56FF2BXA==}
     peerDependencies:
-      '@sinclair/typebox': ^0.34.15
+      '@sinclair/typebox': ^0.34.0
     peerDependenciesMeta:
       '@sinclair/typebox':
         optional: true
@@ -3197,10 +3201,22 @@ packages:
     cpu: [arm64]
     os: [android]
 
+  lightningcss-darwin-arm64@1.30.1:
+    resolution: {integrity: sha512-c8JK7hyE65X1MHMN+Viq9n11RRC7hgin3HhYKhrMyaXflk5GVplZ60IxyoVtzILeKr+xAJwg6zK6sjTBJ0FKYQ==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [arm64]
+    os: [darwin]
+
   lightningcss-darwin-arm64@1.30.2:
     resolution: {integrity: sha512-ylTcDJBN3Hp21TdhRT5zBOIi73P6/W0qwvlFEk22fkdXchtNTOU4Qc37SkzV+EKYxLouZ6M4LG9NfZ1qkhhBWA==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
+    os: [darwin]
+
+  lightningcss-darwin-x64@1.30.1:
+    resolution: {integrity: sha512-k1EvjakfumAQoTfcXUcHQZhSpLlkAuEkdMBsI/ivWw9hL+7FtilQc0Cy3hrx0AAQrVtQAbMI7YjCgYgvn37PzA==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [x64]
     os: [darwin]
 
   lightningcss-darwin-x64@1.30.2:
@@ -3209,11 +3225,23 @@ packages:
     cpu: [x64]
     os: [darwin]
 
+  lightningcss-freebsd-x64@1.30.1:
+    resolution: {integrity: sha512-kmW6UGCGg2PcyUE59K5r0kWfKPAVy4SltVeut+umLCFoJ53RdCUWxcRDzO1eTaxf/7Q2H7LTquFHPL5R+Gjyig==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [x64]
+    os: [freebsd]
+
   lightningcss-freebsd-x64@1.30.2:
     resolution: {integrity: sha512-c2bH6xTrf4BDpK8MoGG4Bd6zAMZDAXS569UxCAGcA7IKbHNMlhGQ89eRmvpIUGfKWNVdbhSbkQaWhEoMGmGslA==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [freebsd]
+
+  lightningcss-linux-arm-gnueabihf@1.30.1:
+    resolution: {integrity: sha512-MjxUShl1v8pit+6D/zSPq9S9dQ2NPFSQwGvxBCYaBYLPlCWuPh9/t1MRS8iUaR8i+a6w7aps+B4N0S1TYP/R+Q==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [arm]
+    os: [linux]
 
   lightningcss-linux-arm-gnueabihf@1.30.2:
     resolution: {integrity: sha512-eVdpxh4wYcm0PofJIZVuYuLiqBIakQ9uFZmipf6LF/HRj5Bgm0eb3qL/mr1smyXIS1twwOxNWndd8z0E374hiA==}
@@ -3221,8 +3249,20 @@ packages:
     cpu: [arm]
     os: [linux]
 
+  lightningcss-linux-arm64-gnu@1.30.1:
+    resolution: {integrity: sha512-gB72maP8rmrKsnKYy8XUuXi/4OctJiuQjcuqWNlJQ6jZiWqtPvqFziskH3hnajfvKB27ynbVCucKSm2rkQp4Bw==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [arm64]
+    os: [linux]
+
   lightningcss-linux-arm64-gnu@1.30.2:
     resolution: {integrity: sha512-UK65WJAbwIJbiBFXpxrbTNArtfuznvxAJw4Q2ZGlU8kPeDIWEX1dg3rn2veBVUylA2Ezg89ktszWbaQnxD/e3A==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [arm64]
+    os: [linux]
+
+  lightningcss-linux-arm64-musl@1.30.1:
+    resolution: {integrity: sha512-jmUQVx4331m6LIX+0wUhBbmMX7TCfjF5FoOH6SD1CttzuYlGNVpA7QnrmLxrsub43ClTINfGSYyHe2HWeLl5CQ==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
@@ -3233,8 +3273,20 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  lightningcss-linux-x64-gnu@1.30.1:
+    resolution: {integrity: sha512-piWx3z4wN8J8z3+O5kO74+yr6ze/dKmPnI7vLqfSqI8bccaTGY5xiSGVIJBDd5K5BHlvVLpUB3S2YCfelyJ1bw==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [x64]
+    os: [linux]
+
   lightningcss-linux-x64-gnu@1.30.2:
     resolution: {integrity: sha512-Cfd46gdmj1vQ+lR6VRTTadNHu6ALuw2pKR9lYq4FnhvgBc4zWY1EtZcAc6EffShbb1MFrIPfLDXD6Xprbnni4w==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [x64]
+    os: [linux]
+
+  lightningcss-linux-x64-musl@1.30.1:
+    resolution: {integrity: sha512-rRomAK7eIkL+tHY0YPxbc5Dra2gXlI63HL+v1Pdi1a3sC+tJTcFrHX+E86sulgAXeI7rSzDYhPSeHHjqFhqfeQ==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
@@ -3245,10 +3297,22 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  lightningcss-win32-arm64-msvc@1.30.1:
+    resolution: {integrity: sha512-mSL4rqPi4iXq5YVqzSsJgMVFENoa4nGTT/GjO2c0Yl9OuQfPsIfncvLrEW6RbbB24WtZ3xP/2CCmI3tNkNV4oA==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [arm64]
+    os: [win32]
+
   lightningcss-win32-arm64-msvc@1.30.2:
     resolution: {integrity: sha512-FZn+vaj7zLv//D/192WFFVA0RgHawIcHqLX9xuWiQt7P0PtdFEVaxgF9rjM/IRYHQXNnk61/H/gb2Ei+kUQ4xQ==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
+    os: [win32]
+
+  lightningcss-win32-x64-msvc@1.30.1:
+    resolution: {integrity: sha512-PVqXh48wh4T53F/1CCu8PIPCxLzWyCnn/9T5W1Jpmdy5h9Cwd+0YQS6/LwhHXSafuc61/xg9Lv5OrCby6a++jg==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [x64]
     os: [win32]
 
   lightningcss-win32-x64-msvc@1.30.2:
@@ -3256,6 +3320,10 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [win32]
+
+  lightningcss@1.30.1:
+    resolution: {integrity: sha512-xi6IyHML+c9+Q3W0S4fCQJOym42pyurFiJUHEcEyHS0CeKzia4yZDEsLlqOFykxOdHpNy0NmvVO31vcSqAxJCg==}
+    engines: {node: '>= 12.0.0'}
 
   lightningcss@1.30.2:
     resolution: {integrity: sha512-utfs7Pr5uJyyvDETitgsaqSyjCb2qNRAtuqUeWIAKztsOYdcACf2KtARYXg2pSvhkt+9NfoaNY7fxjl6nuMjIQ==}
@@ -3851,7 +3919,7 @@ packages:
     resolution: {integrity: sha512-sE/Qp2p+UaV9+W6T+GwsRH5sIynaTfhM2Khn+tN1q1YKYq1STVyAWyC+0i6ac4mFAO/FxQ/a03BDmrrt48qiuQ==}
     peerDependencies:
       '@expo/metro-config': '>=54'
-      lightningcss: '>=1.27.0'
+      lightningcss: 1.30.1
       react: '>=19'
       react-native: '>=0.81'
 
@@ -5350,13 +5418,13 @@ snapshots:
     dependencies:
       '@types/hammerjs': 2.0.46
 
-  '@elysiajs/cors@1.4.0(elysia@1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
+  '@elysiajs/cors@1.4.0(elysia@1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
     dependencies:
-      elysia: 1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
 
-  '@elysiajs/eden@1.4.4(elysia@1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
+  '@elysiajs/eden@1.4.4(elysia@1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
     dependencies:
-      elysia: 1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
 
   '@emnapi/core@1.7.0':
     dependencies:
@@ -5628,7 +5696,7 @@ snapshots:
       glob: 10.4.5
       hermes-parser: 0.29.1
       jsc-safe-url: 0.2.4
-      lightningcss: 1.30.2
+      lightningcss: 1.30.1
       minimatch: 9.0.5
       postcss: 8.4.49
       resolve-from: 5.0.0
@@ -5789,7 +5857,7 @@ snapshots:
 
   '@jest/schemas@29.6.3':
     dependencies:
-      '@sinclair/typebox': 0.27.8
+      '@sinclair/typebox': 0.34.41
 
   '@jest/transform@29.7.0':
     dependencies:
@@ -6293,7 +6361,7 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@sinclair/typebox@0.27.8': {}
+  '@sinclair/typebox@0.34.41': {}
 
   '@sinonjs/commons@3.0.1':
     dependencies:
@@ -6308,7 +6376,7 @@ snapshots:
       '@jridgewell/remapping': 2.3.5
       enhanced-resolve: 5.18.3
       jiti: 2.6.1
-      lightningcss: 1.30.2
+      lightningcss: 1.30.1
       magic-string: 0.30.21
       source-map-js: 1.2.1
       tailwindcss: 4.1.16
@@ -7260,11 +7328,11 @@ snapshots:
 
   electron-to-chromium@1.5.245: {}
 
-  elysia@1.4.15(@sinclair/typebox@0.27.8)(exact-mirror@0.2.3(@sinclair/typebox@0.27.8))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3):
+  elysia@1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3):
     dependencies:
-      '@sinclair/typebox': 0.27.8
+      '@sinclair/typebox': 0.34.41
       cookie: 1.0.2
-      exact-mirror: 0.2.3(@sinclair/typebox@0.27.8)
+      exact-mirror: 0.2.3(@sinclair/typebox@0.34.41)
       fast-decode-uri-component: 1.0.1
       file-type: 21.0.0
       memoirist: 0.4.0
@@ -7595,9 +7663,9 @@ snapshots:
 
   eventemitter3@4.0.7: {}
 
-  exact-mirror@0.2.3(@sinclair/typebox@0.27.8):
+  exact-mirror@0.2.3(@sinclair/typebox@0.34.41):
     optionalDependencies:
-      '@sinclair/typebox': 0.27.8
+      '@sinclair/typebox': 0.34.41
 
   exec-async@2.2.0: {}
 
@@ -8406,35 +8474,80 @@ snapshots:
   lightningcss-android-arm64@1.30.2:
     optional: true
 
+  lightningcss-darwin-arm64@1.30.1:
+    optional: true
+
   lightningcss-darwin-arm64@1.30.2:
+    optional: true
+
+  lightningcss-darwin-x64@1.30.1:
     optional: true
 
   lightningcss-darwin-x64@1.30.2:
     optional: true
 
+  lightningcss-freebsd-x64@1.30.1:
+    optional: true
+
   lightningcss-freebsd-x64@1.30.2:
+    optional: true
+
+  lightningcss-linux-arm-gnueabihf@1.30.1:
     optional: true
 
   lightningcss-linux-arm-gnueabihf@1.30.2:
     optional: true
 
+  lightningcss-linux-arm64-gnu@1.30.1:
+    optional: true
+
   lightningcss-linux-arm64-gnu@1.30.2:
+    optional: true
+
+  lightningcss-linux-arm64-musl@1.30.1:
     optional: true
 
   lightningcss-linux-arm64-musl@1.30.2:
     optional: true
 
+  lightningcss-linux-x64-gnu@1.30.1:
+    optional: true
+
   lightningcss-linux-x64-gnu@1.30.2:
+    optional: true
+
+  lightningcss-linux-x64-musl@1.30.1:
     optional: true
 
   lightningcss-linux-x64-musl@1.30.2:
     optional: true
 
+  lightningcss-win32-arm64-msvc@1.30.1:
+    optional: true
+
   lightningcss-win32-arm64-msvc@1.30.2:
+    optional: true
+
+  lightningcss-win32-x64-msvc@1.30.1:
     optional: true
 
   lightningcss-win32-x64-msvc@1.30.2:
     optional: true
+
+  lightningcss@1.30.1:
+    dependencies:
+      detect-libc: 2.1.2
+    optionalDependencies:
+      lightningcss-darwin-arm64: 1.30.1
+      lightningcss-darwin-x64: 1.30.1
+      lightningcss-freebsd-x64: 1.30.1
+      lightningcss-linux-arm-gnueabihf: 1.30.1
+      lightningcss-linux-arm64-gnu: 1.30.1
+      lightningcss-linux-arm64-musl: 1.30.1
+      lightningcss-linux-x64-gnu: 1.30.1
+      lightningcss-linux-x64-musl: 1.30.1
+      lightningcss-win32-arm64-msvc: 1.30.1
+      lightningcss-win32-x64-msvc: 1.30.1
 
   lightningcss@1.30.2:
     dependencies:

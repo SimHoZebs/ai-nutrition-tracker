@@ -6,9 +6,18 @@
   ],
   "scripts": {
     "dev": "pnpm run --parallel dev",
-    "build": "pnpm run --recursive build"
+    "build": "pnpm run --recursive build",
+    "mobile": "pnpm --filter @lazyfood/mobile start",
+    "server": "pnpm --filter @lazyfood/server dev",
+    "build:server": "pnpm --filter @lazyfood/server build"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "lightningcss": "1.30.1",
+      "@sinclair/typebox": "^0.34.0"
+    }
   }
 }
