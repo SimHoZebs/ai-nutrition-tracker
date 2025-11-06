@@ -1,5 +1,5 @@
 {
-  "name": "lazyfood",
+  "name": "@lazyfood/mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -13,6 +13,7 @@
   "dependencies": {
     "@elysiajs/eden": "^1.4.4",
     "@expo/vector-icons": "^15.0.3",
+    "@lazyfood/server": "workspace:*",
     "@react-navigation/bottom-tabs": "^7.8.1",
     "@react-navigation/elements": "^2.8.1",
     "@react-navigation/native": "^7.1.19",

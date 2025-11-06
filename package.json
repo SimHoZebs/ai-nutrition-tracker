@@ -1,0 +1,14 @@
+{
+  "name": "lazyfood",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "build": "pnpm run --recursive build"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
