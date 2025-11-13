@@ -26,8 +26,6 @@ export function ThemedText({
     link: "text-base leading-[30px] text-cyan-700",
   };
 
-  console.log("ThemedText color:", color);
-
   return (
     <Text
       className={[typeClasses[type], `${color}`, className].join(" ")}
