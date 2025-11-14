@@ -3,7 +3,9 @@
     "strict": true,
     "paths": {
       "@lazyfood/server": ["./apps/server/src/index.ts"]
-    }
+    },
+  "module": "nodenext",
+  "moduleResolution": "nodenext",
   },
   "include": [
     "apps/**/*.ts",
