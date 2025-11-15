@@ -11,14 +11,45 @@ import (
 )
 
 type AgentService struct {
-	agent          agent.Agent
-	runner         *runner.Runner
-	sessionService session.Service
+	runner.Config
+	Runner *runner.Runner
 }
 
 func (s *AgentService) ProcessQuery(ctx context.Context, userID string, sessionID string, msg *genai.Content, cfg agent.RunConfig) (string, error) {
+	println("ProcessQuery called with userID:", userID, "sessionID:", sessionID)
+	getRes, err := s.SessionService.List(ctx, &session.ListRequest{
+		AppName: s.AppName,
+		UserID:  userID,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	found := false
+	for _, session := range getRes.Sessions {
+		println("Checking existing session:", session.ID())
+		if session.ID() == sessionID {
+			println("Found existing session:", sessionID)
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		// Create a new session if it doesn't exist
+		println("Creating new session for userID:", userID, "sessionID:", sessionID)
+		_, err := s.SessionService.Create(ctx, &session.CreateRequest{
+			AppName:   s.AppName,
+			UserID:    userID,
+			SessionID: sessionID,
+		})
+		if err != nil {
+			return "", err
+		}
+	}
+
 	// Run the runner which returns an iterator of events/errors
-	res := s.runner.Run(ctx, userID, sessionID, msg, cfg)
+	res := s.Runner.Run(ctx, userID, sessionID, msg, cfg)
 
 	var sb strings.Builder
 	for ev, itErr := range res {
