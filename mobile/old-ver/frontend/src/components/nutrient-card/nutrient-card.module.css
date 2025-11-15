@@ -1,0 +1,29 @@
+.nutrientCard {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  line-height: initial;
+}
+
+.counter {
+  display: flex;
+  gap: 1px;
+  align-items: end;
+}
+
+.unit {
+  font-size: var(--font-size-0);
+  color: var(--note);
+}
+
+.editValueModalContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

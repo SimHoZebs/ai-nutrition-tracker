@@ -1,0 +1,32 @@
+.logWithTextContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  flex-grow: 1;
+  transform: translateY(-30px)
+}
+
+.loadingText {
+  color: var(--note);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  font-style: italic;
+  animation: loadingTextIntro 0.25s;
+}
+
+@keyframes loadingTextIntro {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px)
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0%)
+  }
+}

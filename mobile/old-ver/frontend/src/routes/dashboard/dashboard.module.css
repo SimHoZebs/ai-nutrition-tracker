@@ -1,0 +1,26 @@
+.logButtonContainer {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.logButtonContainerRight {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.logButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.seeMoreLink {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-0);
+  color: var(--note);
+}

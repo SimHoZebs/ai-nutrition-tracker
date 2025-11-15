@@ -1,0 +1,13 @@
+info:
+  contact: {}
+  description: LazyFood is a AI-powered nutritiont tracker.
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  title: LazyFood API
+  version: "1.0"
+paths:
+  /:
+    get:
+      responses: {}
+swagger: "2.0"

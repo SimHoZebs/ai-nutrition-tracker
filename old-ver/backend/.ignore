@@ -1,6 +1,0 @@
-!*.*ignore
-!*.env
-!*.env.prod
-!.*.json
-!prisma/**/*
-

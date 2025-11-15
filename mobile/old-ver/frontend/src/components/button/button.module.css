@@ -1,0 +1,69 @@
+.baseButton {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--border-radius-1);
+  font-size: var(--font-size-1);
+  user-select: none;
+  border: 0.05rem solid transparent;
+  font-weight: bold;
+  transition: background-color 80ms;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+}
+
+.primary {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary-darker-1);
+
+  &:active {
+    background-color: var(--primary-lighter-1);
+  }
+
+  &.disabled {
+    background-color: var(--primary-faded-1);
+    border-color: var(--primary-faded-1);
+  }
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--black);
+  border-color: var(--border);
+}
+
+.danger {
+
+}
+
+.medium {
+  padding: 5px 20px;
+}
+
+.large {
+  padding: 10px 30px;
+  font-size: var(--font-size-2);
+}
+
+.fill {
+  flex: 1;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
