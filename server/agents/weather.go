@@ -4,11 +4,12 @@ import (
 	"context"
 	"log"
 	"os"
+	"server/constants"
+	"server/shared"
 
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
@@ -28,7 +29,7 @@ type WeatherResponse struct {
 	}
 }
 
-func Weather() (*AgentService, error) {
+func Weather() (*shared.AgentService, error) {
 	ctx := context.Background()
 
 	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
@@ -51,12 +52,10 @@ func Weather() (*AgentService, error) {
 		log.Fatalf("Failed to create agent: %v", err)
 	}
 
-	sessionService := session.InMemoryService()
-
 	runnerConfig := runner.Config{
 		Agent:          agent,
-		AppName:        "lazyfood",
-		SessionService: sessionService,
+		AppName:        constants.AppName,
+		SessionService: shared.GetGlobalInMemorySessionService(),
 	}
 
 	agentRunner, err := runner.New(
@@ -66,7 +65,7 @@ func Weather() (*AgentService, error) {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 
-	return &AgentService{
+	return &shared.AgentService{
 		Runner: agentRunner,
 		Config: runnerConfig,
 	}, nil

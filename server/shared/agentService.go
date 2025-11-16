@@ -1,4 +1,4 @@
-package agents
+package shared
 
 import "google.golang.org/adk/runner"
 

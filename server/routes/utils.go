@@ -4,14 +4,15 @@ import (
 	"context"
 	"strings"
 
+	"server/shared"
+
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/session"
 	"google.golang.org/genai"
-	"server/agents"
 )
 
 type ProcessAgentRequest struct {
-	agents.AgentService
+	shared.AgentService
 	UserID    string         `json:"user_id"`
 	SessionID string         `json:"session_id"`
 	Message   *genai.Content `json:"message"`

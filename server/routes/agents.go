@@ -11,8 +11,8 @@ import (
 	"google.golang.org/genai"
 )
 
-func RegisterAgentEndpoints(api huma.API) {
-	agentsGroup := huma.NewGroup(api, "/agents")
+func RegisterAgentEndpoints(api huma.API, prefix string) {
+	agentsGroup := huma.NewGroup(api, prefix)
 
 	// Create the agent service once.
 	echo, err := runners.NewEcho()

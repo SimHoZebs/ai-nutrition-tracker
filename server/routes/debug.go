@@ -3,28 +3,30 @@ package routes
 import (
 	"context"
 	"fmt"
-	"log"
-	"server/agents"
-	"server/runners"
-
 	"github.com/danielgtaylor/huma/v2"
-	"google.golang.org/genai"
+	"google.golang.org/adk/session"
+	"server/constants"
+	"server/shared"
 )
 
-func registerDebugEndpoints(api huma.API) {
-	debugGroup := huma.NewGroup(api, "/debug")
+type debugResponse struct {
+	Messages []string `json:"messages"`
+}
 
-	huma.Get(debugGroup, "/get-messages/{app-name}/{session-id}", func(ctx context.Context, input *struct {
-		appName   string `path:"app-name"`
-		sessionID string `path:"session-id"`
-	}) (*DebugMessagesResponse, error) {
+func RegisterDebugEndpoints(api huma.API, prefix string) {
+	debugGroup := huma.NewGroup(api, prefix)
 
-		// After runner finishes, fetch the session and show stored events
-		getResp, err := agentService.SessionService.Get(ctx, &session.GetRequest{
-			AppName:   "demo_app",
-			UserID:    input.Body.UserID,
-			SessionID: input.Body.SessionID,
-		})
+	huma.Get(debugGroup, "/get-messages/{user-id}/{session-id}", func(ctx context.Context, input *struct {
+		UserId    string `path:"user-id" example:"user_12345" doc:"User ID associated with the session"`
+		SessionId string `path:"session-id" example:"session_12345" doc:"Session ID to retrieve messages from"`
+	}) (response *debugResponse, err error) {
+
+		getResp, err := shared.GetGlobalInMemorySessionService().Get(
+			ctx, &session.GetRequest{
+				AppName:   constants.AppName,
+				UserID:    input.UserId,
+				SessionID: input.SessionId,
+			})
 		if err != nil {
 			return nil, fmt.Errorf("session get failed: %w", err)
 		}
@@ -42,6 +44,10 @@ func registerDebugEndpoints(api huma.API) {
 			}
 
 		}
+
+		return &debugResponse{
+			Messages: messages,
+		}, nil
 	},
 	)
 }

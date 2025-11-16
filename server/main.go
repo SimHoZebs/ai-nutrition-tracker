@@ -3,15 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humachi"
+	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"server/routes"
-
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/joho/godotenv"
-
-	"github.com/danielgtaylor/huma/v2/adapters/humachi"
-	"github.com/go-chi/chi/v5"
 )
 
 // GreetingOutput represents the greeting operation response.
@@ -38,7 +36,8 @@ func main() {
 		return resp, nil
 	})
 
-	routes.RegisterAgentEndpoints(api)
+	routes.RegisterAgentEndpoints(api, "/agents")
+	routes.RegisterDebugEndpoints(api, "/debug")
 
 	fmt.Println("Server starting at http://localhost:8080")
 	http.ListenAndServe(":8080", r)

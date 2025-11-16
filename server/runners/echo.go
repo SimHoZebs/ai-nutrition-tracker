@@ -1,14 +1,15 @@
 package runners
 
 import (
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
 	"log"
 	"server/agents"
+	"server/constants"
+	"server/shared"
+
+	"google.golang.org/adk/runner"
 )
 
-func NewEcho() (*agents.AgentService, error) {
-	sessionService := session.InMemoryService()
+func NewEcho() (*shared.AgentService, error) {
 	agent, err := agents.NewEchoAgent()
 	if err != nil {
 		log.Fatalf("failed to create echo agent: %v", err)
@@ -16,8 +17,8 @@ func NewEcho() (*agents.AgentService, error) {
 
 	runnerConfig := runner.Config{
 		Agent:          agent,
-		AppName:        "demo_app",
-		SessionService: sessionService,
+		AppName:        constants.AppName,
+		SessionService: shared.GetGlobalInMemorySessionService(),
 	}
 
 	agentRunner, err := runner.New(runnerConfig)
@@ -25,7 +26,7 @@ func NewEcho() (*agents.AgentService, error) {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 
-	return &agents.AgentService{
+	return &shared.AgentService{
 		Runner: agentRunner,
 		Config: runnerConfig,
 	}, nil
