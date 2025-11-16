@@ -14,7 +14,21 @@ import (
 	"google.golang.org/genai"
 )
 
-func Weather() (*runner.Runner, error) {
+type WeatherRequest struct {
+	Body struct {
+		UserID    string `json:"user_id" example:"user_12345" doc:"User ID of the requester"`
+		SessionID string `json:"session_id" example:"session_12345" doc:"Session ID for the conversation"`
+		City      string `json:"city" example:"San Francisco" doc:"City to get weather for"`
+	}
+}
+
+type WeatherResponse struct {
+	Body struct {
+		Forecast string `json:"forecast" example:"Sunny with a high of 75°F" doc:"Weather forecast for the specified city"`
+	}
+}
+
+func Weather() (*AgentService, error) {
 	ctx := context.Background()
 
 	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
@@ -39,17 +53,22 @@ func Weather() (*runner.Runner, error) {
 
 	sessionService := session.InMemoryService()
 
+	runnerConfig := runner.Config{
+		Agent:          agent,
+		AppName:        "lazyfood",
+		SessionService: sessionService,
+	}
+
 	agentRunner, err := runner.New(
-		runner.Config{
-			Agent:          agent,
-			AppName:        "hello_time_app",
-			SessionService: sessionService,
-		},
+		runnerConfig,
 	)
 	if err != nil {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 
-	return agentRunner, nil
+	return &AgentService{
+		Runner: agentRunner,
+		Config: runnerConfig,
+	}, nil
 
 }
