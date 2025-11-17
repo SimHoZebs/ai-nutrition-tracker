@@ -3,10 +3,11 @@ package routes
 import (
 	"context"
 	"fmt"
-	"log"
-	"server/shared"
-
+	"google.golang.org/adk/session"
 	"google.golang.org/genai"
+	"log"
+	"server/constants"
+	"server/shared"
 )
 
 // ConversationRequest is the request body for conversation endpoint.
@@ -26,9 +27,7 @@ type ConversationResponse struct {
 func ConversationHandler(ctx context.Context, agentService *shared.AgentService, input *struct {
 	Body ConversationRequest `body:""`
 }) (*ConversationResponse, error) {
-	content := &genai.Content{
-		Parts: []*genai.Part{{Text: input.Body.Message}},
-	}
+	content := genai.NewContentFromText(input.Body.Message, genai.RoleUser)
 
 	log.Printf("Handler parsed input: %+v", input.Body)
 	log.Printf("Calling runner.Run with user=%q session=%q app=%q", input.Body.UserID, input.Body.SessionID, "demo_app")
@@ -43,6 +42,17 @@ func ConversationHandler(ctx context.Context, agentService *shared.AgentService,
 	if err != nil {
 		return nil, fmt.Errorf("agent processing failed: %w", err)
 	}
+
+	listRes, err := agentService.SessionService.List(ctx, &session.ListRequest{
+		AppName: constants.AppName,
+		UserID:  input.Body.UserID,
+	})
+
+	var sessionIds []string
+	for _, s := range listRes.Sessions {
+		sessionIds = append(sessionIds, s.ID())
+	}
+	println("Current sessions for user:", input.Body.UserID, len(sessionIds))
 
 	resp := &ConversationResponse{}
 	resp.Body.Text = text

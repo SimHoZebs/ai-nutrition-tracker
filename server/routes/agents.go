@@ -35,9 +35,7 @@ func RegisterAgentEndpoints(api huma.API, prefix string) {
 	huma.Post(agentsGroup, "/weather", func(ctx context.Context, input *agents.WeatherRequest) (*agents.WeatherResponse, error) {
 
 		println("Received weather request for city:", input.Body.City)
-		content := &genai.Content{
-			Parts: []*genai.Part{{Text: input.Body.City}},
-		}
+		content := genai.NewContentFromText(input.Body.City, genai.RoleUser)
 
 		text, err := ProcessQuery(ctx, ProcessAgentRequest{
 			UserID:       input.Body.UserID,

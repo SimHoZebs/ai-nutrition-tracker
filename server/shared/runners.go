@@ -6,9 +6,10 @@ import (
 	"google.golang.org/adk/session"
 )
 
+var once sync.Once
+var globalInMemorySessionService session.Service
+
 func GetGlobalInMemorySessionService() session.Service {
-	var once sync.Once
-	var globalInMemorySessionService session.Service
 
 	once.Do(func() {
 		globalInMemorySessionService = session.InMemoryService()

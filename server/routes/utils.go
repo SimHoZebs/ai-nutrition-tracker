@@ -41,7 +41,7 @@ func ProcessQuery(ctx context.Context, req ProcessAgentRequest) (string, error) 
 	if !found {
 		// Create a new session if it doesn't exist
 		println("Creating new session for userID:", req.UserID, "sessionID:", req.SessionID)
-		_, err := req.AgentService.SessionService.Create(ctx, &session.CreateRequest{
+		_, err := req.SessionService.Create(ctx, &session.CreateRequest{
 			AppName:   req.AppName,
 			UserID:    req.UserID,
 			SessionID: req.SessionID,

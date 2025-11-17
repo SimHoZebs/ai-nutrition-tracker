@@ -42,8 +42,8 @@ func Weather() (*shared.AgentService, error) {
 	agent, err := llmagent.New(llmagent.Config{
 		Name:        "hello_time_agent",
 		Model:       model,
-		Description: "Tells the current time in a specified city.",
-		Instruction: "You are a helpful assistant that tells the current time in a city.",
+		Description: "Tells the current weather in a specified city.",
+		Instruction: "You are a helpful assistant that tells the current weather in a city.",
 		Tools: []tool.Tool{
 			geminitool.GoogleSearch{},
 		},
