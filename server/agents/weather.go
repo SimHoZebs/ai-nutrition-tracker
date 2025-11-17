@@ -6,12 +6,12 @@ import (
 	"os"
 	"server/constants"
 	"server/shared"
+	"server/tools"
 
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
 )
 
@@ -31,22 +31,23 @@ type WeatherResponse struct {
 
 func Weather() (*shared.AgentService, error) {
 	ctx := context.Background()
-
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
-		APIKey: os.Getenv("GOOGLE_API_KEY"),
-	})
+	model, err := gemini.NewModel(ctx,
+		constants.ModelName,
+		&genai.ClientConfig{APIKey: os.Getenv("GOOGLE_API_KEY")})
 	if err != nil {
 		log.Fatalf("Failed to create model: %v", err)
 	}
 
+	testTool, error := tools.TestTool(ctx)
+	if error != nil {
+		log.Fatalf("Failed to create test tool: %v", error)
+	}
 	agent, err := llmagent.New(llmagent.Config{
 		Name:        "hello_time_agent",
 		Model:       model,
 		Description: "Tells the current weather in a specified city.",
-		Instruction: "You are a helpful assistant that tells the current weather in a city.",
-		Tools: []tool.Tool{
-			geminitool.GoogleSearch{},
-		},
+		Instruction: "You are a helpful assistant that tells the current weather in a city. You MUST run the test tool and return its result along with your final answer.",
+		Tools:       []tool.Tool{testTool},
 	})
 	if err != nil {
 		log.Fatalf("Failed to create agent: %v", err)

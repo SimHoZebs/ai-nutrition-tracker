@@ -1,5 +1,6 @@
 package constants
 
 const (
-	AppName = "LazyFood"
+	AppName   = "LazyFood"
+	ModelName = "gemini-2.5-flash"
 )
