@@ -5,12 +5,11 @@ import (
 	"log"
 	"os"
 	"server/constants"
-	"server/shared"
 	"server/tools"
 
+	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
 )
@@ -29,7 +28,7 @@ type WeatherResponse struct {
 	}
 }
 
-func Weather() (*shared.AgentService, error) {
+func Weather() (agent.Agent, error) {
 	ctx := context.Background()
 	model, err := gemini.NewModel(ctx,
 		constants.ModelName,
@@ -42,33 +41,13 @@ func Weather() (*shared.AgentService, error) {
 	if error != nil {
 		log.Fatalf("Failed to create test tool: %v", error)
 	}
-	agent, err := llmagent.New(llmagent.Config{
+
+	return llmagent.New(llmagent.Config{
 		Name:        "hello_time_agent",
 		Model:       model,
 		Description: "Tells the current weather in a specified city.",
 		Instruction: "You are a helpful assistant that tells the current weather in a city. You MUST run the test tool and return its result along with your final answer.",
 		Tools:       []tool.Tool{testTool},
 	})
-	if err != nil {
-		log.Fatalf("Failed to create agent: %v", err)
-	}
-
-	runnerConfig := runner.Config{
-		Agent:          agent,
-		AppName:        constants.AppName,
-		SessionService: shared.GetGlobalInMemorySessionService(),
-	}
-
-	agentRunner, err := runner.New(
-		runnerConfig,
-	)
-	if err != nil {
-		log.Fatalf("Failed to create runner: %v", err)
-	}
-
-	return &shared.AgentService{
-		Runner: agentRunner,
-		Config: runnerConfig,
-	}, nil
 
 }

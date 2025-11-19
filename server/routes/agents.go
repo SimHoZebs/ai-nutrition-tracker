@@ -27,7 +27,7 @@ func RegisterAgentEndpoints(api huma.API, prefix string) {
 		return ConversationHandler(ctx, echo, input)
 	})
 
-	weatherRunner, err := agents.Weather()
+	weatherRunner, err := runners.NewWeather()
 	if err != nil {
 		log.Fatal("failed to create weather agent: " + err.Error())
 	}
