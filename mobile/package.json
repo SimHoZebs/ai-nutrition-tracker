@@ -8,16 +8,15 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "generate-client": "orval"
   },
   "dependencies": {
-    "@elysiajs/eden": "^1.4.4",
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.8.1",
     "@react-navigation/elements": "^2.8.1",
     "@react-navigation/native": "^7.1.19",
     "add": "^2.0.6",
-    "elysia": "^1.4.15",
     "expo": "~54.0.22",
     "expo-constants": "~18.0.10",
     "expo-font": "~14.0.9",
@@ -46,6 +45,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
     "@types/react": "~19.2.4",
+    "orval": "^7.4.0",
     "eslint": "^9.39.1",
     "eslint-config-expo": "~10.0.0",
     "postcss": "^8.5.6",

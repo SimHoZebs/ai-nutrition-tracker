@@ -53,4 +53,30 @@ func RegisterAgentEndpoints(api huma.API, prefix string) {
 		return resp, nil
 
 	})
+
+	nutritionRunner, err := runners.NewNutrition()
+	if err != nil {
+		log.Fatal("failed to create nutrition agent: " + err.Error())
+	}
+
+	huma.Post(agentsGroup, "/nutrition", func(ctx context.Context, input *agents.NutritionRequest) (*agents.NutritionResponse, error) {
+
+		println("Received nutrition request:", input.Body.Text)
+		content := genai.NewContentFromText(input.Body.Text, genai.RoleUser)
+
+		text, err := ProcessQuery(ctx, ProcessAgentRequest{
+			UserID:       input.Body.UserID,
+			SessionID:    input.Body.SessionID,
+			AgentService: *nutritionRunner,
+			Message:      content,
+		},
+		)
+		if err != nil {
+			return nil, fmt.Errorf("nutrition agent processing failed: %w", err)
+		}
+
+		resp := &agents.NutritionResponse{}
+		resp.Body.Analysis = text
+		return resp, nil
+	})
 }
